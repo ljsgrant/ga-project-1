@@ -94,17 +94,11 @@ function init() {
   let currentRenderSquare; // the current square that will be rendered
   let currentBlockMatrix; // will be the matrix of how to display the current block and its rotation
 
+  // select the correct block and its correct rotation to render, using:
+  currentBlockMatrix = allBlocks[`block${currentBlock}`][`rot0`];
+
   // serveBlock();
-  renderBlock();
-
-  function renderBlock() {
-    // select the correct block and its correct rotation to render, using:
-    currentBlockMatrix = allBlocks[`block${currentBlock}`][`rot0`];
-
-    clearOldPosition();
-
-    renderNewPosition(currentOrigin);
-  }
+  renderNewPosition();
 
   function fillSquare(position) {
     gridSquares[position].classList.add("filled");
@@ -115,21 +109,25 @@ function init() {
   }
 
   function moveBlockDown() {
+    clearOldPosition();
     currentOrigin += 10;
-    renderBlock();
-  }
-  function moveBlockLeft() {
-    currentOrigin -= 1;
-    renderBlock();
-  }
-  function moveBlockRight() {
-    currentOrigin += 1;
-    renderBlock();
+    renderNewPosition();
   }
 
-  function renderNewPosition(matrixOrigin) {
-    currentRenderRow = matrixOrigin;
-    currentRenderSquare = matrixOrigin;
+  function moveBlockLeft() {
+    clearOldPosition();
+    currentOrigin -= 1;
+    renderNewPosition();
+  }
+  function moveBlockRight() {
+    clearOldPosition();
+    currentOrigin += 1;
+    renderNewPosition();
+  }
+
+  function renderNewPosition() {
+    currentRenderRow = currentOrigin;
+    currentRenderSquare = currentOrigin;
     for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
       currentRenderSquare = currentRenderRow;
       for (let indexInner = 0; indexInner < 4; indexInner++) {
