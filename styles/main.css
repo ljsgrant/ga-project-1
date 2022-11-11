@@ -10,12 +10,14 @@ body {
   height: 100vh;
   margin: 0;
   padding: 20px 0px 0px 0px;
+  border: 5px solid red;
 }
 
 .grid-container {
   height: 90vh;
   display: flex;
   justify-content: center;
+  border: 5px solid green;
 }
 
 .grid {
@@ -25,15 +27,39 @@ body {
   flex-wrap: wrap;
   height: 100%;
   justify-content: center;
-  height: 600px;
-  width: 600px;
+  height: 800px;
+  width: 570px;
+  border: 5px solid blue;
 }
 
 .grid div {
   border: 1px solid lightgrey;
   flex-grow: 1;
-  height: 10%;
-  width: 10%;
+  height: 4.6%;
+  width: 7.14%;
+}
+
+
+
+.grey{
+  background-color: grey;
+}
+
+.left-bounds{
+  /* testing only */
+  background-color: green;
+  opacity: .5;
+}
+
+.right-bounds{
+  /* testing only */
+  background-color: red;
+  opacity: .5;
+}
+
+.bottom-bounds{
+  background-color: brown;
+  opacity: .5;
 }
 
 .filled {

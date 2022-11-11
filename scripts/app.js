@@ -2,14 +2,25 @@ function init() {
   //#region Build Grid
   const grid = document.querySelector(".grid");
   const gridSquares = [];
-  const gridColumns = 10;
-  const gridRows = 10;
+  const gridColumns = 10 + 4;
+  const gridRows = 20 + 2;
   const gridSquareCount = gridColumns * gridRows;
 
   function buildGrid() {
     for (let index = 0; index < gridSquareCount; index++) {
       const gridSquare = document.createElement("div");
       gridSquare.setAttribute("data-index", index);
+
+      if ((index - 2) % gridColumns === 0) {
+        gridSquare.setAttribute("class", "left-bounds");
+      }
+      if ((index + 3) % gridColumns === 0) {
+        gridSquare.setAttribute("class", "right-bounds");
+      }
+      if (index > gridColumns * gridRows - (gridColumns * 2 + 1)) {
+        gridSquare.setAttribute("class", "bottom-bounds");
+      }
+
       gridSquares.push(gridSquare);
       grid.appendChild(gridSquare);
     }
@@ -20,6 +31,8 @@ function init() {
 
   const allBlocks = {
     blockI: {
+      blockWidth: 4,
+      bounds: [5, 6],
       rot0: [
         [0, 0, 0, 0],
         [1, 1, 1, 1],
@@ -46,6 +59,7 @@ function init() {
       ],
     },
     blockJ: {
+      blockWidth: 3,
       rot0: [
         [1, 0, 0, 0],
         [1, 1, 1, 0],
@@ -78,8 +92,18 @@ function init() {
   };
 
   const possibleBlocks = ["I", "J"]; //, "L", "0", "S", "T", "Z"
-  let currentBlock = "J";
-  let currentRotation = 0;
+  let currentBlock = allBlocks["blockJ"];
+  let currentBlockRotation = 180;
+
+  const spawnOrigin = 5; // where each block appears on the map
+  let currentOrigin = spawnOrigin; // where the block currently is on the map
+  let currentRenderRow; // where to start rendering a row
+  let currentRenderSquare; // the current square that will be rendered
+  let currentOriginRowStart = 0; // used to check if block will fall off screen when moving left/right
+  let currentBlockMatrix; // will be the matrix of how to display the current block and its rotation
+
+  // select the correct block and its correct rotation to render, using:
+  currentBlockMatrix = currentBlock[`rot${currentBlockRotation}`];
 
   // serve a block to player by selecting randomly from the above array:
   // function serveBlock() {
@@ -88,16 +112,9 @@ function init() {
   //   console.log(allBlocks["blockI"]["rot0"]);
   // }
 
-  const spawnOrigin = 3; // where each block appears on the map
-  let currentOrigin = spawnOrigin; // where the block currently is on the map
-  let currentRenderRow; // where to start rendering a row
-  let currentRenderSquare; // the current square that will be rendered
-  let currentBlockMatrix; // will be the matrix of how to display the current block and its rotation
-
-  // select the correct block and its correct rotation to render, using:
-  currentBlockMatrix = allBlocks[`block${currentBlock}`][`rot0`];
-
   // serveBlock();
+
+  // placeholder to render a block onscreen for testing
   renderNewPosition();
 
   function fillSquare(position) {
@@ -109,21 +126,48 @@ function init() {
   }
 
   function moveBlockDown() {
-    clearOldPosition();
-    currentOrigin += 10;
-    renderNewPosition();
+    if (document.querySelectorAll(".filled.bottom-bounds").length === 0) {
+      clearOldPosition();
+      currentOrigin += gridColumns;
+      renderNewPosition();
+      currentOriginRowStart += gridColumns;
+    }
   }
 
-  function moveBlockLeft() {
-    clearOldPosition();
-    currentOrigin -= 1;
-    renderNewPosition();
+  window.addEventListener("keydown", moveBlock);
+  window.addEventListener("keydown", rotateBlock);
+
+  function moveBlock(event) {
+    console.log(document.querySelectorAll(".filled.right-bounds").length);
+
+    switch (event.key) {
+      case "ArrowLeft":
+        moveBlockLeft();
+        break;
+      case "ArrowRight":
+        moveBlockRight();
+        break;
+      case "ArrowDown":
+        moveBlockDown();
+        break;
+    }
+    function moveBlockLeft() {
+      if (document.querySelectorAll(".filled.left-bounds").length === 0) {
+        clearOldPosition();
+        currentOrigin -= 1;
+        renderNewPosition();
+      }
+    }
+    function moveBlockRight() {
+      if (document.querySelectorAll(".filled.right-bounds").length === 0) {
+        clearOldPosition();
+        currentOrigin += 1;
+        renderNewPosition();
+      }
+    }
   }
-  function moveBlockRight() {
-    clearOldPosition();
-    currentOrigin += 1;
-    renderNewPosition();
-  }
+
+  function rotateBlock() {}
 
   function renderNewPosition() {
     currentRenderRow = currentOrigin;
@@ -134,11 +178,11 @@ function init() {
         if (currentBlockMatrix[indexOuter][indexInner] === 1) {
           fillSquare(currentRenderSquare);
         }
-        console.log(currentRenderSquare);
+        // console.log(currentRenderSquare);
         currentRenderSquare++;
       }
-      console.log("current row:", currentRenderRow);
-      currentRenderRow += 10;
+      // console.log("current row:", currentRenderRow);
+      currentRenderRow += gridColumns;
     }
   }
 
@@ -148,12 +192,14 @@ function init() {
     for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
       currentRenderSquare = currentRenderRow;
       for (let indexInner = 0; indexInner < 4; indexInner++) {
-        if (gridSquares[currentRenderSquare].classList.contains("filled")) {
-          gridSquares[currentRenderSquare].classList.remove("filled");
+        if (gridSquares[currentRenderSquare] !== undefined) {
+          if (gridSquares[currentRenderSquare].classList.contains("filled")) {
+            clearSquare(currentRenderSquare);
+          }
         }
         currentRenderSquare++;
       }
-      currentRenderRow += 10;
+      currentRenderRow += gridColumns;
     }
   }
 }
