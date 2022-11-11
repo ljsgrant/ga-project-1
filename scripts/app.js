@@ -34,15 +34,15 @@ function init() {
       ],
       rot180: [
         [0, 0, 0, 0],
-        [1, 1, 1, 1],
         [0, 0, 0, 0],
+        [1, 1, 1, 1],
         [0, 0, 0, 0],
       ],
       rot270: [
-        [0, 0, 1, 0],
-        [0, 0, 1, 0],
-        [0, 0, 1, 0],
-        [0, 0, 1, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
       ],
     },
     blockJ: {
@@ -77,8 +77,8 @@ function init() {
     blockT: {},
   };
 
-  const possibleBlocks = ["I", "J", "L", "0", "S", "T", "Z"];
-  let currentBlock;
+  const possibleBlocks = ["I", "J"]; //, "L", "0", "S", "T", "Z"
+  let currentBlock = "J";
   let currentRotation = 0;
 
   // serve a block to player by selecting randomly from the above array:
@@ -88,22 +88,48 @@ function init() {
   //   console.log(allBlocks["blockI"]["rot0"]);
   // }
 
-  const spawnOrigin = 3;
-  let currentOrigin = spawnOrigin;
-  let currentRenderRow = currentOrigin;
-  let currentRenderSquare = currentOrigin;
+  const spawnOrigin = 3; // where each block appears on the map
+  let currentOrigin = spawnOrigin; // where the block currently is on the map
+  let currentRenderRow; // where to start rendering a row
+  let currentRenderSquare; // the current square that will be rendered
+  let currentBlockMatrix; // will be the matrix of how to display the current block and its rotation
 
   // serveBlock();
   renderBlock();
 
   function renderBlock() {
     // select the correct block and its correct rotation to render, using:
-    let currentBlockMatrix = allBlocks[`blockJ`][`rot270`];
-    console.log(currentBlockMatrix);
+    currentBlockMatrix = allBlocks[`block${currentBlock}`][`rot0`];
 
-    currentRenderRow = currentOrigin;
-    currentRenderSquare = currentOrigin;
+    clearOldPosition();
 
+    renderNewPosition(currentOrigin);
+  }
+
+  function fillSquare(position) {
+    gridSquares[position].classList.add("filled");
+  }
+
+  function clearSquare(position) {
+    gridSquares[position].classList.remove("filled");
+  }
+
+  function moveBlockDown() {
+    currentOrigin += 10;
+    renderBlock();
+  }
+  function moveBlockLeft() {
+    currentOrigin -= 1;
+    renderBlock();
+  }
+  function moveBlockRight() {
+    currentOrigin += 1;
+    renderBlock();
+  }
+
+  function renderNewPosition(matrixOrigin) {
+    currentRenderRow = matrixOrigin;
+    currentRenderSquare = matrixOrigin;
     for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
       currentRenderSquare = currentRenderRow;
       for (let indexInner = 0; indexInner < 4; indexInner++) {
@@ -116,33 +142,21 @@ function init() {
       console.log("current row:", currentRenderRow);
       currentRenderRow += 10;
     }
-    // use a nested for loop to iterate through the correct matrix and display it on the grid:
-    // * start at the currentBlockOrigin.
-    // * inner loop then iterates through the first row of the matrix,
-    // * each iteration adds a display-square class to the gridsquare,
-    // * until the inner loop as finsihed a row.
-    // * outer loop then increments the origin by 10 (i.e. moves to the second row),
-    // * inner loop iterates again, this time through the second row of the matrix, and so on.
-    // and so on, until the outer loop has run 4 times (for the 4 rows of the matrix).
-
-    // could also look at doing the matrix as a flat array - then we just need one for-loop,
-    // check if (index % 4 === 0), and if so increment the origin by 10?
-
-    // make sure renderBlock() is called on each "frame" of movement. Can't have it
-    // loop across multiple frames, otherwise the block will appear to break apart.
-
-    // If currentGridSquare.classList.contains(occupied), then call
-    // a stopMoving() function. Make sure this happens BEFORE the block is rendered -
-    // otherwise we'll only find out when we're halfway through rendering the block
-    // (as otherwise the earlier lines will move down without "realising" later ones are occupied).
   }
 
-  function fillSquare(position) {
-    gridSquares[position].classList.add("filled");
-  }
-
-  function clearSquare(position) {
-    gridSquares[position].classList.remove("filled");
+  function clearOldPosition() {
+    currentRenderRow = currentOrigin;
+    currentRenderSquare = currentOrigin;
+    for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
+      currentRenderSquare = currentRenderRow;
+      for (let indexInner = 0; indexInner < 4; indexInner++) {
+        if (gridSquares[currentRenderSquare].classList.contains("filled")) {
+          gridSquares[currentRenderSquare].classList.remove("filled");
+        }
+        currentRenderSquare++;
+      }
+      currentRenderRow += 10;
+    }
   }
 }
 
