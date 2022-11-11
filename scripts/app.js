@@ -31,8 +31,6 @@ function init() {
 
   const allBlocks = {
     blockI: {
-      blockWidth: 4,
-      bounds: [5, 6],
       rot0: [
         [0, 0, 0, 0],
         [1, 1, 1, 1],
@@ -59,7 +57,6 @@ function init() {
       ],
     },
     blockJ: {
-      blockWidth: 3,
       rot0: [
         [1, 0, 0, 0],
         [1, 1, 1, 0],
@@ -94,6 +91,8 @@ function init() {
   const possibleBlocks = ["I", "J"]; //, "L", "0", "S", "T", "Z"
   let currentBlock = allBlocks["blockJ"];
   let currentBlockRotation = 180;
+
+  console.log(Object.keys(currentBlock)[3]);
 
   const spawnOrigin = 5; // where each block appears on the map
   let currentOrigin = spawnOrigin; // where the block currently is on the map
@@ -138,7 +137,7 @@ function init() {
   window.addEventListener("keydown", rotateBlock);
 
   function moveBlock(event) {
-    console.log(document.querySelectorAll(".filled.right-bounds").length);
+    // console.log(document.querySelectorAll(".filled.right-bounds").length);
 
     switch (event.key) {
       case "ArrowLeft":
@@ -167,7 +166,34 @@ function init() {
     }
   }
 
-  function rotateBlock() {}
+  function rotateBlock(event) {
+    switch (event.keyCode) {
+      case 90:
+        console.log("rotate left");
+        clearOldPosition();
+        if (currentBlockRotation === 0) {
+          currentBlockRotation = 270;
+        } else {
+          currentBlockRotation -= 90;
+        }
+        currentBlockMatrix = currentBlock[`rot${currentBlockRotation}`];
+        renderNewPosition();
+        console.log("current rotation:", currentBlockRotation);
+        break;
+      case 88:
+        console.log("rotate right");
+        clearOldPosition();
+        if (currentBlockRotation === 270) {
+          currentBlockRotation = 0;
+        } else {
+          currentBlockRotation += 90;
+        }
+        currentBlockMatrix = currentBlock[`rot${currentBlockRotation}`];
+        renderNewPosition();
+        console.log("current rotation:", currentBlockRotation);
+        break;
+    }
+  }
 
   function renderNewPosition() {
     currentRenderRow = currentOrigin;
