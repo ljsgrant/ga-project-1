@@ -65,7 +65,8 @@ console.log("Block matrix fetch test: ", allBlocks.blockI.rot270);
 // The origin is the top-left square of the block matrix,
 // so the matrix will always start rendering the block at index 3
 // on the grid. So:
-let currentBlockOrigin = 3;
+const spawnOrigin = 3;
+let currentOrigin;
 
 // when moving blocks left, right or down, we just need to update the currentBlockOrigin
 // and then call renderBlock() with the new origin and the array matrix for the current block
