@@ -101,6 +101,7 @@ function init() {
   let currentBlockRotation = 0;
   let fallTimer; // cancel this to end current block fall
   let blockFallSpeed = 500; // will increase this as player advances in levels and/or when player performs a soft drop
+  let obstructedSquares; // will use to check if block can continue falling
 
   console.log(Object.keys(currentBlock)[3]);
 
@@ -110,31 +111,45 @@ function init() {
   let currentRenderSquare; // the current square that will be rendered
 
   // select the correct block and its correct rotation to render, using:
-  let currentBlockMatrix = currentBlock[`rot${currentBlockRotation}`];
+  let currentBlockMatrix;
+
+  function setBlockMatrix() {
+    currentBlockMatrix =
+      allBlocks[`block${currentBlock}`][`rot${currentBlockRotation}`];
+  }
+
+  function resetBlockProperties() {
+    currentBlockRotation = 0;
+    currentOrigin = spawnOrigin;
+    currentRenderRow = spawnOrigin;
+    currentRenderSquare = spawnOrigin;
+  }
+
+  function newBlock() {
+    resetBlockProperties();
+    serveBlock();
+    renderNewPosition();
+    blockFall();
+  }
+  newBlock();
 
   // serve a block to player by selecting randomly from the above array:
-  // function serveBlock() {
-  //   currentBlock =
-  //     possibleBlocks[Math.floor(Math.random() * (possibleBlocks.length - 1))];
-  //   console.log(allBlocks["blockI"]["rot0"]);
-  // }
-
-  // serveBlock();
-
-  // placeholder to render a block onscreen for testing
-  renderNewPosition();
-  blockFall();
+  function serveBlock() {
+    currentBlock =
+      possibleBlocks[Math.round(Math.random() * (possibleBlocks.length - 1))];
+    setBlockMatrix();
+  }
 
   function fillSquare(position) {
-    gridSquares[position].classList.add("filled");
+    gridSquares[position].classList.add("active-block");
   }
 
   function clearSquare(position) {
-    gridSquares[position].classList.remove("filled");
+    gridSquares[position].classList.remove("active-block");
   }
 
   function moveBlockDown() {
-    if (document.querySelectorAll(".filled.bottom-bounds").length === 0) {
+    if (document.querySelectorAll(".active-block.bottom-bounds").length === 0) {
       clearOldPosition();
       currentOrigin += gridColumns;
       renderNewPosition();
@@ -145,9 +160,9 @@ function init() {
     fallTimer = setInterval(() => {
       // get the current block
       const currentBlockSquares = Array.from(
-        document.querySelectorAll(".filled")
+        document.querySelectorAll(".active-block")
       );
-      let obstructedSquares = 0;
+      obstructedSquares = 0;
       // check if any of the squares below the current block are occupied
       currentBlockSquares.forEach((blockSquare) => {
         // get the square immediately below
@@ -167,6 +182,11 @@ function init() {
       } else {
         console.log("reached the bottom!");
         clearInterval(fallTimer);
+        clearOldPosition();
+        currentBlockSquares.forEach((blockSquare) =>
+          gridSquares[blockSquare.dataset.index].classList.add("static-block")
+        );
+        newBlock();
         return;
       }
     }, blockFallSpeed);
@@ -188,14 +208,16 @@ function init() {
         break;
     }
     function moveBlockLeft() {
-      if (document.querySelectorAll(".filled.left-bounds").length === 0) {
+      if (document.querySelectorAll(".active-block.left-bounds").length === 0) {
         clearOldPosition();
         currentOrigin -= 1;
         renderNewPosition();
       }
     }
     function moveBlockRight() {
-      if (document.querySelectorAll(".filled.right-bounds").length === 0) {
+      if (
+        document.querySelectorAll(".active-block.right-bounds").length === 0
+      ) {
         clearOldPosition();
         currentOrigin += 1;
         renderNewPosition();
@@ -204,33 +226,35 @@ function init() {
   }
 
   function rotateBlock(event) {
-    switch (event.keyCode) {
-      case 90:
-        console.log("rotate left");
-        // moveBlockDown();
-        clearOldPosition();
-        if (currentBlockRotation === 0) {
-          currentBlockRotation = 270;
-        } else {
-          currentBlockRotation -= 90;
-        }
-        currentBlockMatrix = currentBlock[`rot${currentBlockRotation}`];
-        renderNewPosition();
-        console.log("current rotation:", currentBlockRotation);
-        break;
-      case 88:
-        console.log("rotate right");
-        // moveBlockDown();
-        clearOldPosition();
-        if (currentBlockRotation === 270) {
-          currentBlockRotation = 0;
-        } else {
-          currentBlockRotation += 90;
-        }
-        currentBlockMatrix = currentBlock[`rot${currentBlockRotation}`];
-        renderNewPosition();
-        console.log("current rotation:", currentBlockRotation);
-        break;
+    if (obstructedSquares === 0) {
+      switch (event.keyCode) {
+        case 90:
+          console.log("rotate left");
+          // moveBlockDown();
+          clearOldPosition();
+          if (currentBlockRotation === 0) {
+            currentBlockRotation = 270;
+          } else {
+            currentBlockRotation -= 90;
+          }
+          setBlockMatrix();
+          renderNewPosition();
+          console.log("current rotation:", currentBlockRotation);
+          break;
+        case 88:
+          console.log("rotate right");
+          // moveBlockDown();
+          clearOldPosition();
+          if (currentBlockRotation === 270) {
+            currentBlockRotation = 0;
+          } else {
+            currentBlockRotation += 90;
+          }
+          setBlockMatrix();
+          renderNewPosition();
+          console.log("current rotation:", currentBlockRotation);
+          break;
+      }
     }
   }
 
@@ -258,7 +282,9 @@ function init() {
       currentRenderSquare = currentRenderRow;
       for (let indexInner = 0; indexInner < 4; indexInner++) {
         if (gridSquares[currentRenderSquare] !== undefined) {
-          if (gridSquares[currentRenderSquare].classList.contains("filled")) {
+          if (
+            gridSquares[currentRenderSquare].classList.contains("active-block")
+          ) {
             clearSquare(currentRenderSquare);
           }
         }

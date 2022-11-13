@@ -13,20 +13,20 @@ body {
   border: 5px solid red;
 }
 
-.outer-container{
+.outer-container {
   display: flex;
   justify-content: center;
 }
 
-.left-container{
- border: 2px solid purple;
- width: 300px;
- margin: 0px -15px 0px 0px;
+.left-container {
+  border: 2px solid purple;
+  width: 300px;
+  margin: 0px -15px 0px 0px;
 }
-.right-container{
-border: 2px solid purple;
- width: 300px;
- margin: 0px 0px 0px -15px;
+.right-container {
+  border: 2px solid purple;
+  width: 300px;
+  margin: 0px 0px 0px -15px;
 }
 
 .grid-container {
@@ -56,35 +56,36 @@ border: 2px solid purple;
   width: 9.8%;
 }
 
-.out-of-bounds{
+.out-of-bounds {
   max-width: 0px;
   display: none;
   border: none;
 }
 
-
-.grey{
+.grey {
   background-color: grey;
 }
 
-.left-bounds{
+.left-bounds {
   /* testing only */
   /* background-color: green;
   opacity: .5; */
 }
 
-.right-bounds{
+.right-bounds {
   /* testing only */
   /* background-color: red;
   opacity: .5; */
 }
 
-.bottom-bounds{
-  /* background-color: brown;
-  opacity: .5; */
+.bottom-bounds {
+  background-color: black;
 }
 
+.static-block {
+  background-color: pink;
+}
 
-.filled {
+.active-block {
   background-color: blue;
 }
