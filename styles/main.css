@@ -69,19 +69,19 @@ border: 2px solid purple;
 
 .left-bounds{
   /* testing only */
-  background-color: green;
-  opacity: .5;
+  /* background-color: green;
+  opacity: .5; */
 }
 
 .right-bounds{
   /* testing only */
-  background-color: red;
-  opacity: .5;
+  /* background-color: red;
+  opacity: .5; */
 }
 
 .bottom-bounds{
-  background-color: brown;
-  opacity: .5;
+  /* background-color: brown;
+  opacity: .5; */
 }
 
 
