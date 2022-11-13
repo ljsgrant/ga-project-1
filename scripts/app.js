@@ -99,8 +99,8 @@ function init() {
   const possibleBlocks = ["I", "J"]; //, "L", "0", "S", "T", "Z"
   let currentBlock = allBlocks["blockJ"];
   let currentBlockRotation = 0;
-  // will increase this as player advances in levels
-  let blockFallSpeed = 500;
+  let fallTimer; // cancel this to end current block fall
+  let blockFallSpeed = 500; // will increase this as player advances in levels and/or when player performs a soft drop
 
   console.log(Object.keys(currentBlock)[3]);
 
@@ -108,11 +108,9 @@ function init() {
   let currentOrigin = spawnOrigin; // where the block currently is on the map
   let currentRenderRow; // where to start rendering a row
   let currentRenderSquare; // the current square that will be rendered
-  let currentOriginRowStart = 0; // used to check if block will fall off screen when moving left/right
-  let currentBlockMatrix; // will be the matrix of how to display the current block and its rotation
 
   // select the correct block and its correct rotation to render, using:
-  currentBlockMatrix = currentBlock[`rot${currentBlockRotation}`];
+  let currentBlockMatrix = currentBlock[`rot${currentBlockRotation}`];
 
   // serve a block to player by selecting randomly from the above array:
   // function serveBlock() {
@@ -140,16 +138,37 @@ function init() {
       clearOldPosition();
       currentOrigin += gridColumns;
       renderNewPosition();
-      currentOriginRowStart += gridColumns;
     }
   }
 
   function blockFall() {
     fallTimer = setInterval(() => {
-      // if(document.querySelectorAll(".filled").length === 0){
-
-      // }
-      moveBlockDown();
+      // get the current block
+      const currentBlockSquares = Array.from(
+        document.querySelectorAll(".filled")
+      );
+      let obstructedSquares = 0;
+      // check if any of the squares below the current block are occupied
+      currentBlockSquares.forEach((blockSquare) => {
+        // get the square immediately below
+        const squareBelow = parseInt(blockSquare.dataset.index) + gridColumns;
+        // if it's obstructed, make obstructedSquares non-zero
+        if (
+          gridSquares[squareBelow].classList.contains("bottom-bounds") ||
+          gridSquares[squareBelow].classList.contains("static-block")
+        ) {
+          obstructedSquares++;
+        }
+      });
+      // move the block down if there are no obstructedSquares, otherwise stop it falling
+      if (obstructedSquares === 0) {
+        console.log("not there yet");
+        moveBlockDown();
+      } else {
+        console.log("reached the bottom!");
+        clearInterval(fallTimer);
+        return;
+      }
     }, blockFallSpeed);
   }
 
