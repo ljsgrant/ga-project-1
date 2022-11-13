@@ -20,6 +20,14 @@ function init() {
       if (index > gridColumns * gridRows - (gridColumns * 2 + 1)) {
         gridSquare.setAttribute("class", "bottom-bounds");
       }
+      if (
+        index % gridColumns === 0 ||
+        (index - 1) % gridColumns === 0 ||
+        (index + 1) % gridColumns === 0 ||
+        (index + 2) % gridColumns === 0
+      ) {
+        gridSquare.setAttribute("class", "out-of-bounds");
+      }
 
       gridSquares.push(gridSquare);
       grid.appendChild(gridSquare);
@@ -89,7 +97,7 @@ function init() {
   };
 
   const possibleBlocks = ["I", "J"]; //, "L", "0", "S", "T", "Z"
-  let currentBlock = allBlocks["blockJ"];
+  let currentBlock = allBlocks["blockI"];
   let currentBlockRotation = 180;
 
   console.log(Object.keys(currentBlock)[3]);
