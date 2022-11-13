@@ -67,19 +67,25 @@ body {
 }
 
 .left-bounds {
-  /* testing only */
-  /* background-color: green;
-  opacity: .5; */
+  
+  background-color: green;
+  opacity: .5;
 }
 
 .right-bounds {
-  /* testing only */
-  /* background-color: red;
-  opacity: .5; */
+  
+  background-color: red;
+  opacity: .5;
 }
 
 .bottom-bounds {
   background-color: black;
+}
+
+.top-of-grid{
+  background-color: purple;
+  max-height: 0px;
+  display: none;
 }
 
 .static-block {

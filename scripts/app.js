@@ -3,22 +3,24 @@ function init() {
   const grid = document.querySelector(".grid");
   const gridSquares = [];
   const gridColumns = 10 + 4;
-  const gridRows = 20 + 2;
+  const gridRows = 20 + 4;
   const gridSquareCount = gridColumns * gridRows;
 
   function buildGrid() {
     for (let index = 0; index < gridSquareCount; index++) {
       const gridSquare = document.createElement("div");
       gridSquare.setAttribute("data-index", index);
-
+      if (index < gridColumns * 2) {
+        gridSquare.classList.add("top-of-grid");
+      }
       if ((index - 2) % gridColumns === 0) {
-        gridSquare.setAttribute("class", "left-bounds");
+        gridSquare.classList.add("left-bounds");
       }
       if ((index + 3) % gridColumns === 0) {
-        gridSquare.setAttribute("class", "right-bounds");
+        gridSquare.classList.add("right-bounds");
       }
       if (index > gridColumns * gridRows - (gridColumns * 2 + 1)) {
-        gridSquare.setAttribute("class", "bottom-bounds");
+        gridSquare.classList.add("bottom-bounds");
       }
       if (
         index % gridColumns === 0 ||
@@ -28,7 +30,7 @@ function init() {
       ) {
         gridSquare.setAttribute("class", "out-of-bounds");
       }
-
+      gridSquare.textContent = index;
       gridSquares.push(gridSquare);
       grid.appendChild(gridSquare);
     }
@@ -105,7 +107,7 @@ function init() {
 
   console.log(Object.keys(currentBlock)[3]);
 
-  const spawnOrigin = 5; // where each block appears on the map
+  const spawnOrigin = 33; // where each block appears on the map
   let currentOrigin = spawnOrigin; // where the block currently is on the map
   let currentRenderRow; // where to start rendering a row
   let currentRenderSquare; // the current square that will be rendered
@@ -191,6 +193,21 @@ function init() {
       }
     }, blockFallSpeed);
   }
+
+  console.log(gridSquares[gridSquares.length - gridColumns + 2].dataset.index);
+
+  function clearRows() {
+    for (
+      let index = gridSquares.length - gridColumns + 2;
+      index >= 0;
+      index - gridColumns
+    ) {
+      const rowToCheck = gridSquares.slice(index, index + 9);
+      console.log(rowToCheck);
+    }
+  }
+
+  // clearRows();
 
   window.addEventListener("keydown", moveBlock);
   window.addEventListener("keydown", rotateBlock);
