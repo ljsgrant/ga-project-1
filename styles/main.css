@@ -21,7 +21,6 @@ body {
 .left-container {
   border: 2px solid purple;
   width: 300px;
-
 }
 .right-container {
   border: 2px solid purple;
@@ -29,13 +28,13 @@ body {
   display: flex;
 }
 
-.score-container{
+.score-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.score{
+.score {
   margin: 0px 10px;
 }
 
@@ -77,13 +76,11 @@ body {
 }
 
 .left-bounds {
-  
   /* background-color: green; */
   /* opacity: .5; */
 }
 
 .right-bounds {
-  
   /* background-color: red; */
   /* opacity: .5; */
 }
@@ -93,7 +90,7 @@ body {
   display: none;
 }
 
-.top-of-grid{
+.top-of-grid {
   background-color: purple;
   max-height: 0px;
   display: none;
@@ -105,4 +102,8 @@ body {
 
 .active-block {
   background-color: blue;
+}
+
+.block-rotate-test {
+  background-color: brown;
 }
