@@ -51,6 +51,15 @@ function init() {
   const scoreDisplay = document.querySelector(".score");
   scoreDisplay.innerText = currentPlayer.score;
 
+  const spawnOrigin = 33; // where each block appears on the map
+  let currentOrigin = spawnOrigin; // where the block currently is on the map
+  let currentRenderRow; // where to start rendering a row
+  let currentRenderSquare; // the current square that will be rendered
+
+  // select the correct block and its correct rotation to render, using:
+  let currentBlockMatrix;
+
+
   const allBlocks = {
     blockI: {
       rot0: [
@@ -237,21 +246,13 @@ function init() {
   };
 
   const possibleBlocks = ["I", "J", "L", "O", "S", "T", "Z"];
-  let currentBlock = allBlocks["blockJ"];
+  let currentBlock;
   let currentBlockRotation = 0;
   let fallTimer; // cancel this to end current block fall
   let blockFallSpeed = 500; // will increase this as player advances in levels and/or when player performs a soft drop
   let obstructedSquares; // will use to check if block can continue falling
 
-  console.log(Object.keys(currentBlock)[3]);
 
-  const spawnOrigin = 33; // where each block appears on the map
-  let currentOrigin = spawnOrigin; // where the block currently is on the map
-  let currentRenderRow; // where to start rendering a row
-  let currentRenderSquare; // the current square that will be rendered
-
-  // select the correct block and its correct rotation to render, using:
-  let currentBlockMatrix;
 
   function setBlockMatrix() {
     currentBlockMatrix =
@@ -274,11 +275,24 @@ function init() {
   // give the player a block on page load (change to game start later)
   newBlock();
 
+  function checkForGameOver() {
+    if (currentOrigin < gridColumns * 3) {
+      return true;
+    }
+  }
+
   // serve a block to player by selecting randomly from the above array:
   function serveBlock() {
     currentBlock =
       possibleBlocks[Math.round(Math.random() * (possibleBlocks.length - 1))];
     setBlockMatrix();
+
+    if (currentBlock === "I"){
+      currentOrigin = spawnOrigin - gridColumns;
+    } else {
+      currentOrigin = spawnOrigin;
+    }
+    
   }
 
   function fillSquare(position) {
@@ -338,8 +352,13 @@ function init() {
           gridSquares[activeSquare.dataset.index].classList.add("static-block")
         );
         clearRows();
-        newBlock();
-        return;
+        if (checkForGameOver() === true) {
+          console.log("game over?!");
+          return;
+        } else {
+          newBlock();
+          return;
+        }
       }
     }, blockFallSpeed);
   }
@@ -390,9 +409,6 @@ function init() {
     currentPlayer.score++;
     scoreDisplay.innerText = currentPlayer.score;
   }
-
-  window.addEventListener("keydown", moveBlock);
-  window.addEventListener("keydown", rotateBlock);
 
   function moveBlock(event) {
     const currentActiveSquares = getCurrentActiveSquares();
@@ -519,6 +535,9 @@ function init() {
       currentRenderRow += gridColumns;
     }
   }
+
+  window.addEventListener("keydown", moveBlock);
+  window.addEventListener("keydown", rotateBlock);
 }
 
 document.addEventListener("DOMContentLoaded", init);
