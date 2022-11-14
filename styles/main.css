@@ -21,12 +21,22 @@ body {
 .left-container {
   border: 2px solid purple;
   width: 300px;
-  margin: 0px -15px 0px 0px;
+
 }
 .right-container {
   border: 2px solid purple;
   width: 300px;
-  margin: 0px 0px 0px -15px;
+  display: flex;
+}
+
+.score-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.score{
+  margin: 0px 10px;
 }
 
 .grid-container {
@@ -43,7 +53,7 @@ body {
   flex-wrap: wrap;
   height: 100%;
   justify-content: center;
-  height: 810px;
+  height: 800px;
   width: 430px;
   border: 5px solid blue;
   padding: 0px -107px;
@@ -52,8 +62,8 @@ body {
 .grid div {
   border: 1px solid lightgrey;
   /* flex-grow: 1; */
-  height: 4.6%;
-  width: 9.8%;
+  height: 5%;
+  width: 10%;
 }
 
 .out-of-bounds {
@@ -68,18 +78,19 @@ body {
 
 .left-bounds {
   
-  background-color: green;
-  opacity: .5;
+  /* background-color: green; */
+  /* opacity: .5; */
 }
 
 .right-bounds {
   
-  background-color: red;
-  opacity: .5;
+  /* background-color: red; */
+  /* opacity: .5; */
 }
 
 .bottom-bounds {
   background-color: black;
+  display: none;
 }
 
 .top-of-grid{

@@ -1,4 +1,13 @@
 function init() {
+  class Player {
+    constructor(name, score = 0) {
+      this.name = name;
+      this.score = score;
+    }
+  }
+
+  const currentPlayer = new Player("Louis", 0);
+
   //#region Build Grid
   const grid = document.querySelector(".grid");
   const gridSquares = [];
@@ -30,7 +39,7 @@ function init() {
       ) {
         gridSquare.setAttribute("class", "out-of-bounds");
       }
-      gridSquare.textContent = index;
+      // gridSquare.textContent = index;
       gridSquares.push(gridSquare);
       grid.appendChild(gridSquare);
     }
@@ -38,6 +47,9 @@ function init() {
   buildGrid();
 
   //#endregion
+
+  const scoreDisplay = document.querySelector(".score");
+  scoreDisplay.innerText = currentPlayer.score;
 
   const allBlocks = {
     blockI: {
@@ -92,13 +104,139 @@ function init() {
         [0, 0, 0, 0],
       ],
     },
-    blockL: {},
-    blockO: {},
-    blockS: {},
-    blockT: {},
+    blockL: {
+      rot0: [
+        [0, 0, 1, 0],
+        [1, 1, 1, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot90: [
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      rot180: [
+        [0, 0, 0, 0],
+        [1, 1, 1, 0],
+        [1, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot270: [
+        [1, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+    },
+    blockO: {
+      rot0: [
+        [0, 1, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot90: [
+        [0, 1, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot180: [
+        [0, 1, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot270: [
+        [0, 1, 1, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+    },
+    blockS: {
+      rot0: [
+        [0, 1, 1, 0],
+        [1, 1, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot90: [
+        [0, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      rot180: [
+        [0, 0, 0, 0],
+        [0, 1, 1, 0],
+        [1, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot270: [
+        [1, 0, 0, 0],
+        [1, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+    },
+    blockT: {
+      rot0: [
+        [0, 1, 0, 0],
+        [1, 1, 1, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot90: [
+        [0, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot180: [
+        [0, 0, 0, 0],
+        [1, 1, 1, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot270: [
+        [0, 1, 0, 0],
+        [1, 1, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+    },
+    blockZ: {
+      rot0: [
+        [1, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot90: [
+        [0, 0, 1, 0],
+        [0, 1, 1, 0],
+        [0, 1, 0, 0],
+        [0, 0, 0, 0],
+      ],
+      rot180: [
+        [0, 0, 0, 0],
+        [1, 1, 0, 0],
+        [0, 1, 1, 0],
+        [0, 0, 0, 0],
+      ],
+      rot270: [
+        [0, 1, 0, 0],
+        [1, 1, 0, 0],
+        [1, 0, 0, 0],
+        [0, 0, 0, 0],
+      ],
+    },
   };
 
-  const possibleBlocks = ["I", "J"]; //, "L", "0", "S", "T", "Z"
+  const possibleBlocks = ["I", "J", "L", "O", "S", "T", "Z"];
   let currentBlock = allBlocks["blockJ"];
   let currentBlockRotation = 0;
   let fallTimer; // cancel this to end current block fall
@@ -158,17 +296,18 @@ function init() {
     }
   }
 
+  function getCurrentActiveSquares() {
+    return Array.from(document.querySelectorAll(".active-block"));
+  }
+
   function blockFall() {
     fallTimer = setInterval(() => {
-      // get the current block
-      const currentBlockSquares = Array.from(
-        document.querySelectorAll(".active-block")
-      );
+      const currentActiveSquares = getCurrentActiveSquares();
       obstructedSquares = 0;
       // check if any of the squares below the current block are occupied
-      currentBlockSquares.forEach((blockSquare) => {
+      currentActiveSquares.forEach((activeSquare) => {
         // get the square immediately below
-        const squareBelow = parseInt(blockSquare.dataset.index) + gridColumns;
+        const squareBelow = parseInt(activeSquare.dataset.index) + gridColumns;
         // if it's obstructed, make obstructedSquares non-zero
         if (
           gridSquares[squareBelow].classList.contains("bottom-bounds") ||
@@ -185,29 +324,62 @@ function init() {
         console.log("reached the bottom!");
         clearInterval(fallTimer);
         clearOldPosition();
-        currentBlockSquares.forEach((blockSquare) =>
-          gridSquares[blockSquare.dataset.index].classList.add("static-block")
+        currentActiveSquares.forEach((activeSquare) =>
+          gridSquares[activeSquare.dataset.index].classList.add("static-block")
         );
+        clearRows();
         newBlock();
         return;
       }
     }, blockFallSpeed);
   }
 
-  console.log(gridSquares[gridSquares.length - gridColumns + 2].dataset.index);
-
   function clearRows() {
+    // index will be the start of the bottommost row that is within the left-bounds and bottom-bounds
     for (
-      let index = gridSquares.length - gridColumns + 2;
-      index >= 0;
-      index - gridColumns
+      let index = parseInt(
+        gridSquares[gridSquares.length - gridColumns * 3 + 2].dataset.index
+      );
+      // loop will stop before entering the top-bounds
+      index >= gridColumns * 2;
+      index -= gridColumns
     ) {
-      const rowToCheck = gridSquares.slice(index, index + 9);
-      console.log(rowToCheck);
+      const rowToCheck = gridSquares.slice(index, index + 10);
+      // console.log(rowToCheck);
+      if (
+        rowToCheck.every((square) => square.classList.contains("static-block"))
+      ) {
+        console.log("MADE A ROW!!!!");
+        rowToCheck.forEach((square) => square.classList.remove("static-block"));
+        const allStaticBlocks = Array.from(
+          document.querySelectorAll(".static-block")
+        );
+        const blocksToMoveDown = [];
+        console.log("blocks to move down", blocksToMoveDown);
+        allStaticBlocks.forEach((square) => {
+          if (parseInt(square.dataset.index) < index) {
+            blocksToMoveDown.push(square);
+          }
+        });
+        blocksToMoveDown.forEach((square) =>
+          square.classList.remove("static-block")
+        );
+        blocksToMoveDown.forEach((square) =>
+          gridSquares[
+            parseInt(square.dataset.index) + gridColumns
+          ].classList.add("static-block")
+        );
+        console.log("reached end of clearRows");
+        incrementScore();
+        clearRows();
+      }
     }
   }
 
-  // clearRows();
+  function incrementScore() {
+    currentPlayer.score++;
+    scoreDisplay.innerText = currentPlayer.score;
+  }
 
   window.addEventListener("keydown", moveBlock);
   window.addEventListener("keydown", rotateBlock);
