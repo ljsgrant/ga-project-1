@@ -548,7 +548,7 @@ function init() {
             }
 
             // * test case 2
-            testOrigin = currentOrigin - 1; // test 2
+            testOrigin = currentOrigin + 1; // test 2
             renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
             outOfBoundsSquares = document.querySelectorAll(
               ".block-rotate-test.out-of-bounds"
@@ -572,7 +572,7 @@ function init() {
             }
 
             // * test case 3
-            testOrigin = currentOrigin - 1 - gridColumns;
+            testOrigin = currentOrigin + 1 - gridColumns;
             renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
             outOfBoundsSquares = document.querySelectorAll(
               ".block-rotate-test.out-of-bounds"
@@ -1008,11 +1008,475 @@ function init() {
             }
             break;
         }
+      } else if (event.keyCode === 88){
+        switch (currentBlockRotation) {
+          case 0:
+            // * test case 1 (basic rotation)
+            testOrigin = currentOrigin;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 2
+            testOrigin = currentOrigin - 1; // test 2
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 3
+            testOrigin = currentOrigin - 1 - gridColumns;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 4
+            testOrigin = currentOrigin + gridColumns * 2;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 5
+            testOrigin = currentOrigin - 1 + gridColumns * 2;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+            // * if all the above fail, we simply don't perform a rotation.
+            break;
+          case 90:
+            // * test case 1 (basic rotation)
+            testOrigin = currentOrigin;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 2
+            testOrigin = currentOrigin + 1; // test 2
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 3
+            testOrigin = currentOrigin + 1 + gridColumns;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 4
+            testOrigin = currentOrigin - gridColumns * 2;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 5
+            testOrigin = currentOrigin + 1 - gridColumns * 2;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+            break;
+          case 180:
+            // * test case 1 (basic rotation)
+            testOrigin = currentOrigin;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 2
+            testOrigin = currentOrigin + 1; // test 2
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 3
+            testOrigin = currentOrigin + 1 - gridColumns;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 4
+            testOrigin = currentOrigin + gridColumns * 2;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 5
+            testOrigin = currentOrigin + 1 + gridColumns * 2;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+            break;
+          case 270:
+            // * test case 1 (basic rotation)
+            testOrigin = currentOrigin;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 2
+            testOrigin = currentOrigin - 1; // test 2
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 3
+            testOrigin = currentOrigin - 1 + gridColumns;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 4
+            testOrigin = currentOrigin - gridColumns * 2;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+
+            // * test case 5
+            testOrigin = currentOrigin - 1 - gridColumns * 2;
+            renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
+            outOfBoundsSquares = document.querySelectorAll(
+              ".block-rotate-test.out-of-bounds"
+            );
+            occupiedSquares = document.querySelectorAll(
+              ".block-rotate-test.static-block"
+            );
+            clearOldPosition("block-rotate-test", testOrigin);
+            if (
+              outOfBoundsSquares.length === 0 &&
+              occupiedSquares.length === 0
+            ) {
+              clearOldPosition();
+              currentOrigin = testOrigin;
+              rotateBlock(event.keyCode);
+              return;
+            } else {
+              outOfBoundsSquares = null;
+              occupiedSquares = null;
+            }
+            break;
+        }
       }
-
-      // rotating right
-
-      // test I rotation
     }
   }
 
