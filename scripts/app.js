@@ -271,6 +271,7 @@ function init() {
     renderNewPosition();
     blockFall();
   }
+  // give the player a block on page load (change to game start later)
   newBlock();
 
   // serve a block to player by selecting randomly from the above array:
@@ -289,7 +290,10 @@ function init() {
   }
 
   function moveBlockDown() {
-    if (document.querySelectorAll(".active-block.bottom-bounds").length === 0) {
+    if (
+      checkObstructedSquaresBelow() === 0 &&
+      document.querySelectorAll(".active-block.bottom-bounds").length === 0
+    ) {
       clearOldPosition();
       currentOrigin += gridColumns;
       renderNewPosition();
@@ -300,24 +304,30 @@ function init() {
     return Array.from(document.querySelectorAll(".active-block"));
   }
 
+  function checkObstructedSquaresBelow() {
+    const currentActiveSquares = getCurrentActiveSquares();
+    obstructedSquares = 0;
+    // check if any of the squares below the current block are occupied
+    currentActiveSquares.forEach((activeSquare) => {
+      // get the square immediately below
+      const squareBelow = parseInt(activeSquare.dataset.index) + gridColumns;
+      // if it's obstructed, make obstructedSquares non-zero
+      if (
+        gridSquares[squareBelow].classList.contains("bottom-bounds") ||
+        gridSquares[squareBelow].classList.contains("static-block")
+      ) {
+        obstructedSquares++;
+      }
+    });
+    return obstructedSquares;
+  }
+
   function blockFall() {
     fallTimer = setInterval(() => {
       const currentActiveSquares = getCurrentActiveSquares();
-      obstructedSquares = 0;
-      // check if any of the squares below the current block are occupied
-      currentActiveSquares.forEach((activeSquare) => {
-        // get the square immediately below
-        const squareBelow = parseInt(activeSquare.dataset.index) + gridColumns;
-        // if it's obstructed, make obstructedSquares non-zero
-        if (
-          gridSquares[squareBelow].classList.contains("bottom-bounds") ||
-          gridSquares[squareBelow].classList.contains("static-block")
-        ) {
-          obstructedSquares++;
-        }
-      });
+
       // move the block down if there are no obstructedSquares, otherwise stop it falling
-      if (obstructedSquares === 0) {
+      if (checkObstructedSquaresBelow() === 0) {
         console.log("not there yet");
         moveBlockDown();
       } else {
@@ -385,6 +395,9 @@ function init() {
   window.addEventListener("keydown", rotateBlock);
 
   function moveBlock(event) {
+    const currentActiveSquares = getCurrentActiveSquares();
+    obstructedSquares = 0;
+
     switch (event.key) {
       case "ArrowLeft":
         moveBlockLeft();
@@ -397,14 +410,38 @@ function init() {
         break;
     }
     function moveBlockLeft() {
-      if (document.querySelectorAll(".active-block.left-bounds").length === 0) {
+      // check if any of the squares left of current block are occupied
+      currentActiveSquares.forEach((activeSquare) => {
+        // get the square immediately to the left
+        const squareToLeft = parseInt(activeSquare.dataset.index) - 1;
+        // if it's obstructed, make obstructedSquares non-zero
+        if (gridSquares[squareToLeft].classList.contains("static-block")) {
+          obstructedSquares++;
+        }
+      });
+      // move the block left if there are no obstructedSquares AND the block isn't at the left bounds
+      if (
+        obstructedSquares === 0 &&
+        document.querySelectorAll(".active-block.left-bounds").length === 0
+      ) {
         clearOldPosition();
         currentOrigin -= 1;
         renderNewPosition();
       }
     }
     function moveBlockRight() {
+      // check if any of the squares right of current block are occupied
+      currentActiveSquares.forEach((activeSquare) => {
+        // get the square immediately to the right
+        const squareToRight = parseInt(activeSquare.dataset.index) + 1;
+        // if it's obstructed, make obstructedSquares non-zero
+        if (gridSquares[squareToRight].classList.contains("static-block")) {
+          obstructedSquares++;
+        }
+      });
+      // move the block left if there are no obstructedSquares AND the block isn't at the left bounds
       if (
+        obstructedSquares === 0 &&
         document.querySelectorAll(".active-block.right-bounds").length === 0
       ) {
         clearOldPosition();
