@@ -10,18 +10,27 @@
   </head>
   <body>
     <div class="outer-container">
-      <div class="left-container">
-        Controls: left/right/down arrows, z to rotate left, x to rotate right
+      <div class="container left-container">
+        <div class="title inner-container container"><h1>Tetris</h1></div>
+        <div class="inner-container container">
+          <p>Controls:</p>
+          <p>Move: left/right/down arrows</p>
+          <p>Rotate left: Z</p>
+          <p>Rotate right: X</p>
+        </div>
       </div>
-      <div class="grid-container">
+      <div class="container grid-container">
+        <!-- <div class="grid-overlay">
+          <p class="grid-overlay_text">GAME OVER</p>
+        </div> -->
         <div class="grid"></div>
       </div>
-      <div class="right-container">
-        <div class="score-container">
+      <div class="container right-container">
+        <div class="container inner-container score-container">
           <p>Rows cleared:</p>
           <div class="score"></div>
         </div>
-        <button class="play-button">Play!</button>
+        <button class="container play-button">Play!</button>
       </div>
     </div>
   </body>

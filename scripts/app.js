@@ -257,8 +257,11 @@ function init() {
   let blockFallSpeed = 500; // will increase this as player advances in levels and/or when player performs a soft drop
   let obstructedSquares; // will use to check if block can continue falling
 
+
+  // UI elements
   const playButton = document.querySelector(".play-button");
   playButton.addEventListener("click", newBlock);
+  const gridOverlay = document.querySelector(".grid-overlay");
 
   window.addEventListener("keydown", moveBlock);
   window.addEventListener("keydown", testRotation);
@@ -280,6 +283,7 @@ function init() {
   }
 
   function newBlock() {
+    playButton.style.display = "none";
     resetBlockProperties();
     serveBlock();
     renderNewPosition("active-block");
@@ -322,11 +326,8 @@ function init() {
   function checkObstructedSquaresBelow() {
     const currentActiveSquares = getCurrentActiveSquares();
     obstructedSquares = 0;
-    // check if any of the squares below the current block are occupied
     currentActiveSquares.forEach((activeSquare) => {
-      // get the square immediately below
       const squareBelow = parseInt(activeSquare.dataset.index) + gridColumns;
-      // if it's obstructed, make obstructedSquares non-zero
       if (
         gridSquares[squareBelow].classList.contains("bottom-bounds") ||
         gridSquares[squareBelow].classList.contains("static-block")
@@ -346,12 +347,10 @@ function init() {
         clearInterval(fallTimer);
         clearOldPosition();
         // add to stack:
-        currentActiveSquares.forEach((activeSquare) =>
-          gridSquares[activeSquare.dataset.index].classList.add("static-block", `block-${currentBlock}`)
-        );
+        addToStack(currentActiveSquares);
         clearRows();
         if (checkForGameOver() === true) {
-          console.log("game over?!");
+          gridOverlay.style.display = "flex";
           return;
         } else {
           newBlock();
@@ -359,6 +358,12 @@ function init() {
         }
       }
     }, blockFallSpeed);
+
+    function addToStack(currentActiveSquares){
+      currentActiveSquares.forEach((activeSquare) =>
+        gridSquares[activeSquare.dataset.index].classList.add("static-block", `block-${currentBlock}`)
+      );
+    }
   }
 
   function clearRows() {
@@ -469,6 +474,82 @@ function init() {
         currentOrigin += 1;
         renderNewPosition("active-block");
       }
+    }
+  }
+
+  function rotateBlock(keyCode) {
+    if (obstructedSquares === 0) {
+      switch (keyCode) {
+        // z key to rotate left
+        case 90:
+          clearOldPosition();
+          if (currentBlockRotation === 0) {
+            currentBlockRotation = 270;
+          } else {
+            currentBlockRotation -= 90;
+          }
+          setBlockMatrix();
+          renderNewPosition("active-block");
+          break;
+        // x key to rotate right
+        case 88:
+          clearOldPosition();
+          if (currentBlockRotation === 270) {
+            currentBlockRotation = 0;
+          } else {
+            currentBlockRotation += 90;
+          }
+          setBlockMatrix();
+          renderNewPosition("active-block");
+          break;
+      }
+    }
+  }
+
+  function renderNewPosition(
+    classSelector = "active-block",
+    origin = currentOrigin,
+    blockMatrix = currentBlockMatrix
+  ) {
+    currentRenderRow = origin;
+    currentRenderSquare = origin;
+    for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
+      currentRenderSquare = currentRenderRow;
+      for (let indexInner = 0; indexInner < 4; indexInner++) {
+        if (blockMatrix[indexOuter][indexInner] === 1) {
+          gridSquares[currentRenderSquare].classList.add(classSelector);
+          if (classSelector === "active-block"){
+            gridSquares[currentRenderSquare].classList.add(`block-${currentBlock}`);
+          }
+        }
+        currentRenderSquare++;
+      }
+      currentRenderRow += gridColumns;
+    }
+  }
+
+  function clearOldPosition(
+    classSelector = "active-block",
+    origin = currentOrigin
+  ) {
+    currentRenderRow = origin;
+    currentRenderSquare = origin;
+    for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
+      currentRenderSquare = currentRenderRow;
+      for (let indexInner = 0; indexInner < 4; indexInner++) {
+        if (gridSquares[currentRenderSquare] !== undefined) {
+          if (
+            gridSquares[currentRenderSquare].classList.contains(classSelector)
+          ) {
+            gridSquares[currentRenderSquare].classList.remove(classSelector);
+            if (classSelector === "active-block"){
+              gridSquares[currentRenderSquare].classList.remove(`block-${currentBlock}`);
+            }
+          }
+        }
+        currentRenderSquare++;
+      }
+      currentRenderRow += gridColumns;
     }
   }
 
@@ -897,82 +978,6 @@ function init() {
             break;
         }
       }
-    }
-  }
-
-  function rotateBlock(keyCode) {
-    if (obstructedSquares === 0) {
-      switch (keyCode) {
-        // z key to rotate left
-        case 90:
-          clearOldPosition();
-          if (currentBlockRotation === 0) {
-            currentBlockRotation = 270;
-          } else {
-            currentBlockRotation -= 90;
-          }
-          setBlockMatrix();
-          renderNewPosition("active-block");
-          break;
-        // x key to rotate right
-        case 88:
-          clearOldPosition();
-          if (currentBlockRotation === 270) {
-            currentBlockRotation = 0;
-          } else {
-            currentBlockRotation += 90;
-          }
-          setBlockMatrix();
-          renderNewPosition("active-block");
-          break;
-      }
-    }
-  }
-
-  function renderNewPosition(
-    classSelector = "active-block",
-    origin = currentOrigin,
-    blockMatrix = currentBlockMatrix
-  ) {
-    currentRenderRow = origin;
-    currentRenderSquare = origin;
-    for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
-      currentRenderSquare = currentRenderRow;
-      for (let indexInner = 0; indexInner < 4; indexInner++) {
-        if (blockMatrix[indexOuter][indexInner] === 1) {
-          gridSquares[currentRenderSquare].classList.add(classSelector);
-          if (classSelector === "active-block"){
-            gridSquares[currentRenderSquare].classList.add(`block-${currentBlock}`);
-          }
-        }
-        currentRenderSquare++;
-      }
-      currentRenderRow += gridColumns;
-    }
-  }
-
-  function clearOldPosition(
-    classSelector = "active-block",
-    origin = currentOrigin
-  ) {
-    currentRenderRow = origin;
-    currentRenderSquare = origin;
-    for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
-      currentRenderSquare = currentRenderRow;
-      for (let indexInner = 0; indexInner < 4; indexInner++) {
-        if (gridSquares[currentRenderSquare] !== undefined) {
-          if (
-            gridSquares[currentRenderSquare].classList.contains(classSelector)
-          ) {
-            gridSquares[currentRenderSquare].classList.remove(classSelector);
-            if (classSelector === "active-block"){
-              gridSquares[currentRenderSquare].classList.remove(`block-${currentBlock}`);
-            }
-          }
-        }
-        currentRenderSquare++;
-      }
-      currentRenderRow += gridColumns;
     }
   }
 }
