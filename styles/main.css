@@ -99,7 +99,7 @@ body {
 
 .static-block {
   /* background-color: pink; */
-  opacity: 0.5;
+  opacity: 0.75;
 }
 
 .active-block {
@@ -111,11 +111,11 @@ body {
 }
 
 .block-I {
-  background-color: cyan;
+  background-color: rgb(0, 202, 202);
 }
 
 .block-O {
-  background-color: yellow;
+  background-color: rgb(249, 224, 0);
 }
 
 .block-T {
@@ -127,15 +127,15 @@ body {
 }
 
 .block-J {
-  background-color: blue;
+  background-color: rgb(0, 42, 211);
 }
 
 .block-Z {
-  background-color: red;
+  background-color: rgb(198, 0, 0);
 }
 
 .block-L {
-  background-color: orange;
+  background-color: rgb(220, 128, 0);
 }
 
 .play-button {

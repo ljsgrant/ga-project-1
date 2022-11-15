@@ -40,7 +40,7 @@ function init() {
       ) {
         gridSquare.setAttribute("class", "out-of-bounds");
       }
-      // gridSquare.textContent = index;
+      gridSquare.textContent = index;
       gridSquares.push(gridSquare);
       grid.appendChild(gridSquare);
     }
@@ -285,8 +285,6 @@ function init() {
     renderNewPosition("active-block");
     blockFall();
   }
-  // give the player a block on page load (change to game start later)
-  // newBlock();
 
   function checkForGameOver() {
     if (currentOrigin < gridColumns * 3) {
@@ -342,14 +340,12 @@ function init() {
   function blockFall() {
     fallTimer = setInterval(() => {
       const currentActiveSquares = getCurrentActiveSquares();
-      // move the block down if there are no obstructedSquares, otherwise stop it falling
       if (checkObstructedSquaresBelow() === 0) {
-        // console.log("not there yet");
         moveBlockDown();
       } else {
-        // console.log("reached the bottom!");
         clearInterval(fallTimer);
         clearOldPosition();
+        // add to stack:
         currentActiveSquares.forEach((activeSquare) =>
           gridSquares[activeSquare.dataset.index].classList.add("static-block", `block-${currentBlock}`)
         );
@@ -370,37 +366,44 @@ function init() {
     for (
       let index = parseInt(
         gridSquares[gridSquares.length - gridColumns * 3 + 2].dataset.index
-      );
-      // loop will stop before entering the top-bounds
-      index >= gridColumns * 2;
-      index -= gridColumns
+      ); // index starts at the lowest lefthand corner of the playable grid
+      index >= gridColumns * 2; // loop will stop before entering the top-bounds
+      index -= gridColumns // go up by one row each iteration
     ) {
       const rowToCheck = gridSquares.slice(index, index + 10);
-      // console.log(rowToCheck);
-      if (
-        rowToCheck.every((square) => square.classList.contains("static-block"))
-      ) {
-        console.log("MADE A ROW!!!!");
-        rowToCheck.forEach((square) => square.classList.remove("static-block"));
+      if (rowToCheck.every((square) => square.classList.contains("static-block"))) {
+
+        // remove the complete row
+        rowToCheck.forEach((square) => square.classList.remove("static-block", "block-I", "block-O", "block-T", "block-S", "block-J", "block-Z", "block-L"));
+
+        // get remaining static blocks on the grid
         const allStaticBlocks = Array.from(
           document.querySelectorAll(".static-block")
         );
-        const blocksToMoveDown = [];
-        console.log("blocks to move down", blocksToMoveDown);
+
+        // get which blocks to move down (all blocks above the removed row)
+        let blocksToMoveDown = [];
         allStaticBlocks.forEach((square) => {
           if (parseInt(square.dataset.index) < index) {
             blocksToMoveDown.push(square);
+            console.log(square.dataset.index)
           }
         });
-        blocksToMoveDown.forEach((square) =>
-          square.classList.remove("static-block")
-        );
-        blocksToMoveDown.forEach((square) =>
-          gridSquares[
-            parseInt(square.dataset.index) + gridColumns
-          ].classList.add("static-block")
-        );
-        console.log("reached end of clearRows");
+        console.log(blocksToMoveDown);
+
+        // make sure we're starting from the bottom-right square and working backwards & upwards:
+        blocksToMoveDown = blocksToMoveDown.reverse();
+        // move the blocks down
+        blocksToMoveDown.forEach(
+          (square) => {
+            const squareClasses = Array.from(square.classList);
+            square.classList.remove("static-block", "block-I", "block-O", "block-T", "block-S", "block-J", "block-Z", "block-L");
+            
+            const squareBelow = gridSquares[parseInt(square.dataset.index) + gridColumns];
+            squareClasses.forEach((squareClass) => squareBelow.classList.add(squareClass));
+          }
+        )
+
         incrementScore();
         clearRows();
       }
