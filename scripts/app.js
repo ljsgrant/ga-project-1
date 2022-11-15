@@ -40,7 +40,7 @@ function init() {
       ) {
         gridSquare.setAttribute("class", "out-of-bounds");
       }
-      gridSquare.textContent = index;
+      // gridSquare.textContent = index;
       gridSquares.push(gridSquare);
       grid.appendChild(gridSquare);
     }
