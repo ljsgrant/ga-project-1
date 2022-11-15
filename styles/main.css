@@ -109,35 +109,35 @@ body {
   /* background-color: brown; */
 }
 
-.block-I{
+.block-I {
   background-color: cyan;
 }
 
-.block-O{
+.block-O {
   background-color: yellow;
 }
 
-.block-T{
+.block-T {
   background-color: purple;
 }
 
-.block-S{
+.block-S {
   background-color: green;
 }
 
-.block-J{
+.block-J {
   background-color: blue;
 }
 
-.block-Z{
+.block-Z {
   background-color: red;
 }
 
-.block-L{
+.block-L {
   background-color: orange;
 }
 
-.play-button{
+.play-button {
   background-color: red;
   color: white;
   font-size: 200%;

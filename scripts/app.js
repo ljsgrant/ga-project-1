@@ -277,7 +277,6 @@ function init() {
 
   function startGame() {
     let startGameTimer = setInterval(() => {}, 1000);
-
   }
 
   function newBlock() {
