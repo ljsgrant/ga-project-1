@@ -351,7 +351,7 @@ function init() {
         clearInterval(fallTimer);
         clearOldPosition();
         currentActiveSquares.forEach((activeSquare) =>
-          gridSquares[activeSquare.dataset.index].classList.add("static-block")
+          gridSquares[activeSquare.dataset.index].classList.add("static-block", `block-${currentBlock}`)
         );
         clearRows();
         if (checkForGameOver() === true) {
@@ -938,6 +938,9 @@ function init() {
       for (let indexInner = 0; indexInner < 4; indexInner++) {
         if (blockMatrix[indexOuter][indexInner] === 1) {
           gridSquares[currentRenderSquare].classList.add(classSelector);
+          if (classSelector === "active-block"){
+            gridSquares[currentRenderSquare].classList.add(`block-${currentBlock}`);
+          }
         }
         currentRenderSquare++;
       }
@@ -959,6 +962,9 @@ function init() {
             gridSquares[currentRenderSquare].classList.contains(classSelector)
           ) {
             gridSquares[currentRenderSquare].classList.remove(classSelector);
+            if (classSelector === "active-block"){
+              gridSquares[currentRenderSquare].classList.remove(`block-${currentBlock}`);
+            }
           }
         }
         currentRenderSquare++;

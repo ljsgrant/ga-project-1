@@ -98,11 +98,12 @@ body {
 }
 
 .static-block {
-  background-color: pink;
+  /* background-color: pink; */
+  opacity: 0.5;
 }
 
 .active-block {
-  background-color: blue;
+  /* background-color: blue; */
 }
 
 .block-rotate-test {
