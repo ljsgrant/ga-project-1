@@ -6,7 +6,7 @@ function init() {
     }
   }
 
-  const currentPlayer = new Player("Louis", 0);
+  const currentPlayer = new Player("Player1", 0);
 
   //#region Build Grid
   const grid = document.querySelector(".grid");
@@ -250,13 +250,18 @@ function init() {
   let currentBlockRotation = 0;
 
   let testOrigin; // will use for rotation tests
-  let currentTestBlock; // will use for rotation tests
   let currentTestBlockRotation; // will use for rotation tests
   let testBlockMatrix; // use for test rotation before performing basic rotation or wall kick
 
   let fallTimer; // cancel this to end current block fall
   let blockFallSpeed = 500; // will increase this as player advances in levels and/or when player performs a soft drop
   let obstructedSquares; // will use to check if block can continue falling
+
+  const playButton = document.querySelector(".play-button");
+  playButton.addEventListener("click", newBlock);
+
+  window.addEventListener("keydown", moveBlock);
+  window.addEventListener("keydown", testRotation);
 
   function setBlockMatrix() {
     currentBlockMatrix =
@@ -270,6 +275,11 @@ function init() {
     currentRenderSquare = spawnOrigin;
   }
 
+  function startGame() {
+    let startGameTimer = setInterval(() => {}, 1000);
+
+  }
+
   function newBlock() {
     resetBlockProperties();
     serveBlock();
@@ -277,7 +287,7 @@ function init() {
     blockFall();
   }
   // give the player a block on page load (change to game start later)
-  newBlock();
+  // newBlock();
 
   function checkForGameOver() {
     if (currentOrigin < gridColumns * 3) {
@@ -957,9 +967,6 @@ function init() {
       currentRenderRow += gridColumns;
     }
   }
-
-  window.addEventListener("keydown", moveBlock);
-  window.addEventListener("keydown", testRotation);
 }
 
 document.addEventListener("DOMContentLoaded", init);

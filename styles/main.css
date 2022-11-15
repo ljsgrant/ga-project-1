@@ -26,6 +26,7 @@ body {
   border: 2px solid purple;
   width: 300px;
   display: flex;
+  flex-direction: column;
 }
 
 .score-container {
@@ -105,5 +106,40 @@ body {
 }
 
 .block-rotate-test {
-  background-color: brown;
+  /* background-color: brown; */
+}
+
+.block-I{
+  background-color: cyan;
+}
+
+.block-O{
+  background-color: yellow;
+}
+
+.block-T{
+  background-color: purple;
+}
+
+.block-S{
+  background-color: green;
+}
+
+.block-J{
+  background-color: blue;
+}
+
+.block-Z{
+  background-color: red;
+}
+
+.block-L{
+  background-color: orange;
+}
+
+.play-button{
+  background-color: red;
+  color: white;
+  font-size: 200%;
+  cursor: pointer;
 }
