@@ -100,10 +100,12 @@ body {
 .static-block {
   /* background-color: pink; */
   opacity: 0.75;
+  border-radius: 10px;
 }
 
 .active-block {
   /* background-color: blue; */
+  border-radius: 10px;
 }
 
 .block-rotate-test {
