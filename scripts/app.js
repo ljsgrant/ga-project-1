@@ -1,15 +1,25 @@
 function init() {
-  // build grid on page load  
-
+  // build grid on page load
 
   class Player {
-    constructor(name, score = 0) {
+    constructor(
+      name,
+      score = 0,
+      level = 0,
+      currentLevelScore = 0,
+      rowsTotalUntilLevel,
+      rowsRemainingUntilLevel
+    ) {
       this.name = name;
       this.score = score;
+      this.level = level;
+      this.currentLevelScore = currentLevelScore;
+      this.rowsTotalUntilLevel = rowsTotalUntilLevel;
+      this.rowsRemainingUntilLevel = rowsRemainingUntilLevel;
     }
   }
 
-  const currentPlayer = new Player("Player1", 0);
+  const currentPlayer = new Player("Player1");
 
   //#region Build Grid
   const grid = document.querySelector(".grid");
@@ -49,7 +59,7 @@ function init() {
       gridSquares.push(gridSquare);
       grid.appendChild(gridSquare);
     }
-    function clearGrid(){
+    function clearGrid() {
       gridSquares.length = 0;
       grid.innerHTML = null;
     }
@@ -263,7 +273,9 @@ function init() {
   let testBlockMatrix; // use for test rotation before performing basic rotation or wall kick
 
   let fallTimer; // cancel this to end current block fall
-  let blockFallSpeed = 500; // will increase this as player advances in levels and/or when player performs a soft drop
+  const startingSpeed = 800; // higher = slower. Blocks start new game falling at this speed.
+  let blockFallSpeed = startingSpeed; // higher = slower. Decrease as player advances in levels.
+  const levelSpeedIncrease = 50; // how much to speed up blockFallSpeed with each level
   let obstructedSquares; // will use to check if block can continue falling
 
   // UI elements
@@ -272,12 +284,11 @@ function init() {
   const nextLevelButton = document.querySelector(".next-level-button");
   const playAgainButton = document.querySelector(".play-again-button");
   const overlayMessage = document.querySelector(".grid-overlay_message");
+  const rowsRemainingDisplay = document.querySelector(".rows-remaining");
+  const levelDisplay = document.querySelector(".level");
 
   playButton.addEventListener("click", startGame);
   playAgainButton.addEventListener("click", startGame);
-
-  window.addEventListener("keydown", moveBlock);
-  window.addEventListener("keydown", testRotation);
 
   function setBlockMatrix() {
     currentBlockMatrix =
@@ -293,6 +304,18 @@ function init() {
 
   function startGame() {
     buildGrid();
+
+    window.addEventListener("keydown", moveBlock);
+    window.addEventListener("keydown", testRotation);
+
+    currentPlayer.level = 0;
+    blockFallSpeed = startingSpeed;
+
+    currentPlayer.rowsTotalUntilLevel = currentPlayer.level * 10 + 10;
+    currentPlayer.rowsRemainingUntilLevel = currentPlayer.rowsTotalUntilLevel;
+    levelDisplay.textContent = currentPlayer.level;
+    rowsRemainingDisplay.textContent = currentPlayer.rowsRemainingUntilLevel;
+
     overlayMessage.innerText = "Get Ready!";
     playButton.style.display = "none";
     playAgainButton.style.display = "none";
@@ -310,8 +333,6 @@ function init() {
     }, 1000);
   }
 
-  function nextLevel() {}
-
   function newBlock() {
     resetBlockProperties();
     serveBlock();
@@ -319,17 +340,34 @@ function init() {
     blockFall();
   }
 
-  function checkForGameOver() {
-    if (currentOrigin < gridColumns * 3) {
-      return true;
-    }
-  }
-
   function gameOver() {
     clearInterval(fallTimer);
+    window.removeEventListener("keydown", moveBlock);
+    window.removeEventListener("keydown", testRotation);
     overlayMessage.innerText = "Game Over!";
     playAgainButton.style.display = "flex";
     gridOverlay.style.display = "flex";
+  }
+
+  function checkForLevelUp() {
+    if (currentPlayer.rowsRemainingUntilLevel === 0) {
+      currentPlayer.level++;
+      levelDisplay.textContent = currentPlayer.level;
+      currentPlayer.rowsTotalUntilLevel = currentPlayer.level * 10 + 10;
+      currentPlayer.rowsRemainingUntilLevel = currentPlayer.rowsTotalUntilLevel;
+      rowsRemainingDisplay.textContent = currentPlayer.rowsRemainingUntilLevel;
+      blockFallSpeed -= levelSpeedIncrease;
+    }
+  }
+
+  function checkForGameOver() {
+    if (currentBlock !== "I" && currentOrigin < gridColumns * 3) {
+      return true;
+    } else if (currentBlock === "I" && currentOrigin < gridColumns * 2) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   function serveBlock() {
@@ -389,6 +427,7 @@ function init() {
           gameOver();
           return;
         } else {
+          checkForLevelUp();
           newBlock();
           return;
         }
@@ -469,7 +508,6 @@ function init() {
             squareBelow.classList.add(squareClass)
           );
         });
-
         incrementScore();
         clearRows();
       }
@@ -479,6 +517,8 @@ function init() {
   function incrementScore() {
     currentPlayer.score++;
     scoreDisplay.innerText = currentPlayer.score;
+    currentPlayer.rowsRemainingUntilLevel--;
+    rowsRemainingDisplay.textContent = currentPlayer.rowsRemainingUntilLevel;
   }
 
   function moveBlock(event) {
