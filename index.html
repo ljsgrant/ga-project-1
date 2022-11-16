@@ -9,11 +9,14 @@
     <link rel="stylesheet" href="./styles/main.css" />
   </head>
   <body>
+    <audio id="audio"></audio>
     <div class="grid-overlay">
       <h2 class="grid-overlay_message">TETRIS</h2>
       <button class="container button play-button">Play</button>
       <button class="container button play-again-button">Play Again?</button>
-      <button class="container button next-level-button">Next Level &#x25B6;</button> 
+      <button class="container button next-level-button">
+        Next Level &#x25B6;
+      </button>
     </div>
     <div class="outer-container">
       <div class="container left-container">
@@ -26,23 +29,29 @@
         </div>
       </div>
       <div class="container grid-container">
-        <!-- <div class="grid-overlay">
-          <p class="grid-overlay_text">GAME OVER</p>
-        </div> -->
         <div class="grid"></div>
       </div>
       <div class="container right-container">
-        <div class="container sub-container score-container">
-          <p>Total rows:</p>
-          <div class="score"></div>
+        <div class="right-container_top">
+          <div class="container sub-container score-container">
+            <p>Total rows:</p>
+            <div class="score"></div>
+          </div>
+          <div class="container sub-container level-container">
+            <p>Level:</p>
+            <div class="level"></div>
+          </div>
+          <div class="container sub-container rows-remaining-container">
+            <p>Rows until next level:</p>
+            <div class="rows-remaining"></div>
+          </div>
         </div>
-        <div class="container sub-container level-container">
-          <p>Level:</p>
-          <div class="level"></div>
-        </div>
-        <div class="container sub-container rows-remaining-container">
-          <p>Rows until next level:</p>
-          <div class="rows-remaining"></div>
+        <div class="right-container_bottom">
+          <h2>Next block:</h2>
+          <div class="container sub-container next-block-container">
+            <div class="mini-grid">
+            </div>
+          </div>
         </div>
       </div>
     </div>

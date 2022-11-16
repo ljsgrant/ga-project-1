@@ -24,8 +24,8 @@ function init() {
   //#region Build Grid
   const grid = document.querySelector(".grid");
   const gridSquares = [];
-  const gridColumns = 10 + 4;
-  const gridRows = 20 + 4;
+  const gridColumns = 14;
+  const gridRows = 24;
   const gridSquareCount = gridColumns * gridRows;
 
   function buildGrid() {
@@ -44,8 +44,7 @@ function init() {
         gridSquare.classList.add("right-bounds");
       }
       if (index > gridColumns * gridRows - (gridColumns * 2 + 1)) {
-        gridSquare.classList.add("bottom-bounds");
-        gridSquare.classList.add("out-of-bounds");
+        gridSquare.classList.add("bottom-bounds", "out-of-bounds");
       }
       if (
         index % gridColumns === 0 ||
@@ -265,7 +264,7 @@ function init() {
   let currentRenderRow; // where to start rendering a row
   let currentRenderSquare; // the current square that will be rendered
 
-  let currentBlock;
+  let currentBlock = null;
   let currentBlockRotation = 0;
 
   let testOrigin; // will use for rotation tests
@@ -336,6 +335,7 @@ function init() {
   function newBlock() {
     resetBlockProperties();
     serveBlock();
+    buildMiniGrid();
     renderNewPosition("active-block");
     blockFall();
   }
@@ -370,9 +370,15 @@ function init() {
     }
   }
 
+let nextBlock;
+
   function serveBlock() {
-    currentBlock =
-      possibleBlocks[Math.round(Math.random() * (possibleBlocks.length - 1))];
+    if (currentBlock === null){
+      currentBlock = possibleBlocks[Math.round(Math.random() * (possibleBlocks.length - 1))];
+    } else {
+      currentBlock = nextBlock;
+    }
+    nextBlock = possibleBlocks[Math.round(Math.random() * (possibleBlocks.length - 1))];
     setBlockMatrix();
     // fixes the spawn origin for I-block, which spawns with a blank top row of its matrix
     if (currentBlock === "I") {
@@ -1083,6 +1089,30 @@ function init() {
             break;
         }
       }
+    }
+  }
+
+  const miniGrid = document.querySelector(".mini-grid");
+  let nextBlockMatrix; 
+
+  function buildMiniGrid() {
+    // const miniGridSquares = [];
+    setNextBlockMatrix();
+    miniGrid.innerHTML = null;
+    const miniGridSquareCount = 8;
+    for (let i = 0; i < miniGridSquareCount; i++) {
+      console.log("build minigrid");
+      const miniGridSquare = document.createElement("div");
+      console.log(currentBlockMatrix);
+      if (nextBlockMatrix.flat()[i] === 1) {
+        miniGridSquare.classList.add(`block-${nextBlock}`);
+      }
+      miniGrid.appendChild(miniGridSquare);
+    }
+
+    function setNextBlockMatrix() {
+      nextBlockMatrix =
+        allBlocks[`block${nextBlock}`]["rot0"];
     }
   }
 }
