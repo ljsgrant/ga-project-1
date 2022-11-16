@@ -9,10 +9,16 @@
     <link rel="stylesheet" href="./styles/main.css" />
   </head>
   <body>
+    <div class="grid-overlay">
+      <h2 class="grid-overlay_message">TETRIS</h2>
+      <button class="container button play-button">Play</button>
+      <button class="container button play-again-button">Play Again?</button>
+      <button class="container button next-level-button">Next Level &#x25B6;</button> 
+    </div>
     <div class="outer-container">
       <div class="container left-container">
         <div class="title sub-container container"><h1>Tetris</h1></div>
-        <div class="sub-container container">
+        <div class="sub-container container controls">
           <p>Controls:</p>
           <p>Move: left/right/down arrows</p>
           <p>Rotate left: Z</p>
@@ -30,7 +36,6 @@
           <p>Rows cleared:</p>
           <div class="score"></div>
         </div>
-        <button class="container play-button">Play!</button>
       </div>
     </div>
   </body>

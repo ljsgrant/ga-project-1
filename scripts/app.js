@@ -257,11 +257,13 @@ function init() {
   let blockFallSpeed = 500; // will increase this as player advances in levels and/or when player performs a soft drop
   let obstructedSquares; // will use to check if block can continue falling
 
-
   // UI elements
-  const playButton = document.querySelector(".play-button");
-  playButton.addEventListener("click", newBlock);
   const gridOverlay = document.querySelector(".grid-overlay");
+  const playButton = document.querySelector(".play-button");
+  playButton.addEventListener("click", startGame);
+  const nextLevelButton = document.querySelector(".next-level-button");
+  const playAgainButton = document.querySelector(".play-again-button");
+  const overlayMessage = document.querySelector(".grid-overlay_message")
 
   window.addEventListener("keydown", moveBlock);
   window.addEventListener("keydown", testRotation);
@@ -279,11 +281,27 @@ function init() {
   }
 
   function startGame() {
-    let startGameTimer = setInterval(() => {}, 1000);
+    // playButton.style.display = none;
+    // playAgainButton.style.display = none;
+    // nextLevelButton.style.display = none;
+    overlayMessage.innerText = "Get Ready!"
+    playButton.style.display = "none";
+    let countdown = 3;
+    const startGameTimer = setInterval(() => {
+      if (countdown > 0) {
+        overlayMessage.innerText = countdown;
+        countdown -= 1;
+      } else {
+        gridOverlay.style.display = "none";
+        clearInterval(startGameTimer);
+        newBlock();
+      }
+    }, 1000);
   }
 
+  function nextLevel() {}
+
   function newBlock() {
-    playButton.style.display = "none";
     resetBlockProperties();
     serveBlock();
     renderNewPosition("active-block");
@@ -359,9 +377,12 @@ function init() {
       }
     }, blockFallSpeed);
 
-    function addToStack(currentActiveSquares){
+    function addToStack(currentActiveSquares) {
       currentActiveSquares.forEach((activeSquare) =>
-        gridSquares[activeSquare.dataset.index].classList.add("static-block", `block-${currentBlock}`)
+        gridSquares[activeSquare.dataset.index].classList.add(
+          "static-block",
+          `block-${currentBlock}`
+        )
       );
     }
   }
@@ -376,10 +397,22 @@ function init() {
       index -= gridColumns // go up by one row each iteration
     ) {
       const rowToCheck = gridSquares.slice(index, index + 10);
-      if (rowToCheck.every((square) => square.classList.contains("static-block"))) {
-
+      if (
+        rowToCheck.every((square) => square.classList.contains("static-block"))
+      ) {
         // remove the complete row
-        rowToCheck.forEach((square) => square.classList.remove("static-block", "block-I", "block-O", "block-T", "block-S", "block-J", "block-Z", "block-L"));
+        rowToCheck.forEach((square) =>
+          square.classList.remove(
+            "static-block",
+            "block-I",
+            "block-O",
+            "block-T",
+            "block-S",
+            "block-J",
+            "block-Z",
+            "block-L"
+          )
+        );
 
         // get remaining static blocks on the grid
         const allStaticBlocks = Array.from(
@@ -391,7 +424,7 @@ function init() {
         allStaticBlocks.forEach((square) => {
           if (parseInt(square.dataset.index) < index) {
             blocksToMoveDown.push(square);
-            console.log(square.dataset.index)
+            console.log(square.dataset.index);
           }
         });
         console.log(blocksToMoveDown);
@@ -399,15 +432,25 @@ function init() {
         // make sure we're starting from the bottom-right square and working backwards & upwards:
         blocksToMoveDown = blocksToMoveDown.reverse();
         // move the blocks down
-        blocksToMoveDown.forEach(
-          (square) => {
-            const squareClasses = Array.from(square.classList);
-            square.classList.remove("static-block", "block-I", "block-O", "block-T", "block-S", "block-J", "block-Z", "block-L");
-            
-            const squareBelow = gridSquares[parseInt(square.dataset.index) + gridColumns];
-            squareClasses.forEach((squareClass) => squareBelow.classList.add(squareClass));
-          }
-        )
+        blocksToMoveDown.forEach((square) => {
+          const squareClasses = Array.from(square.classList);
+          square.classList.remove(
+            "static-block",
+            "block-I",
+            "block-O",
+            "block-T",
+            "block-S",
+            "block-J",
+            "block-Z",
+            "block-L"
+          );
+
+          const squareBelow =
+            gridSquares[parseInt(square.dataset.index) + gridColumns];
+          squareClasses.forEach((squareClass) =>
+            squareBelow.classList.add(squareClass)
+          );
+        });
 
         incrementScore();
         clearRows();
@@ -518,8 +561,10 @@ function init() {
       for (let indexInner = 0; indexInner < 4; indexInner++) {
         if (blockMatrix[indexOuter][indexInner] === 1) {
           gridSquares[currentRenderSquare].classList.add(classSelector);
-          if (classSelector === "active-block"){
-            gridSquares[currentRenderSquare].classList.add(`block-${currentBlock}`);
+          if (classSelector === "active-block") {
+            gridSquares[currentRenderSquare].classList.add(
+              `block-${currentBlock}`
+            );
           }
         }
         currentRenderSquare++;
@@ -542,8 +587,10 @@ function init() {
             gridSquares[currentRenderSquare].classList.contains(classSelector)
           ) {
             gridSquares[currentRenderSquare].classList.remove(classSelector);
-            if (classSelector === "active-block"){
-              gridSquares[currentRenderSquare].classList.remove(`block-${currentBlock}`);
+            if (classSelector === "active-block") {
+              gridSquares[currentRenderSquare].classList.remove(
+                `block-${currentBlock}`
+              );
             }
           }
         }
