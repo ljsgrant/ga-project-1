@@ -1,4 +1,7 @@
 function init() {
+  // build grid on page load  
+
+
   class Player {
     constructor(name, score = 0) {
       this.name = name;
@@ -16,6 +19,8 @@ function init() {
   const gridSquareCount = gridColumns * gridRows;
 
   function buildGrid() {
+    clearGrid();
+
     for (let index = 0; index < gridSquareCount; index++) {
       const gridSquare = document.createElement("div");
       gridSquare.setAttribute("data-index", index);
@@ -43,6 +48,10 @@ function init() {
       // gridSquare.textContent = index;
       gridSquares.push(gridSquare);
       grid.appendChild(gridSquare);
+    }
+    function clearGrid(){
+      gridSquares.length = 0;
+      grid.innerHTML = null;
     }
   }
   buildGrid();
@@ -260,10 +269,12 @@ function init() {
   // UI elements
   const gridOverlay = document.querySelector(".grid-overlay");
   const playButton = document.querySelector(".play-button");
-  playButton.addEventListener("click", startGame);
   const nextLevelButton = document.querySelector(".next-level-button");
   const playAgainButton = document.querySelector(".play-again-button");
-  const overlayMessage = document.querySelector(".grid-overlay_message")
+  const overlayMessage = document.querySelector(".grid-overlay_message");
+
+  playButton.addEventListener("click", startGame);
+  playAgainButton.addEventListener("click", startGame);
 
   window.addEventListener("keydown", moveBlock);
   window.addEventListener("keydown", testRotation);
@@ -281,11 +292,11 @@ function init() {
   }
 
   function startGame() {
-    // playButton.style.display = none;
-    // playAgainButton.style.display = none;
-    // nextLevelButton.style.display = none;
-    overlayMessage.innerText = "Get Ready!"
+    buildGrid();
+    overlayMessage.innerText = "Get Ready!";
     playButton.style.display = "none";
+    playAgainButton.style.display = "none";
+    nextLevelButton.style.display = "none";
     let countdown = 3;
     const startGameTimer = setInterval(() => {
       if (countdown > 0) {
@@ -312,6 +323,13 @@ function init() {
     if (currentOrigin < gridColumns * 3) {
       return true;
     }
+  }
+
+  function gameOver() {
+    clearInterval(fallTimer);
+    overlayMessage.innerText = "Game Over!";
+    playAgainButton.style.display = "flex";
+    gridOverlay.style.display = "flex";
   }
 
   function serveBlock() {
@@ -368,7 +386,7 @@ function init() {
         addToStack(currentActiveSquares);
         clearRows();
         if (checkForGameOver() === true) {
-          gridOverlay.style.display = "flex";
+          gameOver();
           return;
         } else {
           newBlock();
