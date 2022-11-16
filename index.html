@@ -11,7 +11,7 @@
   <body>
     <audio id="audio"></audio>
     <div class="grid-overlay">
-      <h2 class="grid-overlay_message">TETRIS</h2>
+      <h2 class="grid-overlay_message"></h2>
       <button class="container button play-button">Play</button>
       <button class="container button play-again-button">Play Again?</button>
       <button class="container button next-level-button">
@@ -21,6 +21,16 @@
     <div class="outer-container">
       <div class="container left-container">
         <div class="title sub-container container"><h1>Tetris</h1></div>
+        <div class="stats-outer-container sub-container container">
+          <h2>Statistics</h2>
+          <div class="stats-inner-container"><p>Block I: </p><p class="I-stats stats">0</p></div>
+          <div class="stats-inner-container"><p>Block O: </p><p class="O-stats stats">0</p></div>
+          <div class="stats-inner-container"><p>Block T: </p><p class="T-stats stats">0</p></div>
+          <div class="stats-inner-container"><p>Block S: </p><p class="S-stats stats">0</p></div>
+          <div class="stats-inner-container"><p>Block Z: </p><p class="Z-stats stats">0</p></div>
+          <div class="stats-inner-container"><p>Block J: </p><p class="J-stats stats">0</p></div>
+          <div class="stats-inner-container"><p>Block L: </p><p class="L-stats stats">0</p></div>
+        </div>
         <div class="sub-container container controls">
           <p>Controls:</p>
           <p>Move: left/right/down arrows</p>
@@ -39,18 +49,17 @@
           </div>
           <div class="container sub-container level-container">
             <p>Level:</p>
-            <div class="level"></div>
+            <div class="level">0</div>
           </div>
           <div class="container sub-container rows-remaining-container">
             <p>Rows until next level:</p>
-            <div class="rows-remaining"></div>
+            <div class="rows-remaining">10</div>
           </div>
         </div>
         <div class="right-container_bottom">
-          <h2>Next block:</h2>
+          <h2>Next block</h2>
           <div class="container sub-container next-block-container">
-            <div class="mini-grid">
-            </div>
+            <div class="mini-grid"></div>
           </div>
         </div>
       </div>

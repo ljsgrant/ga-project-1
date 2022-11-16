@@ -96,6 +96,7 @@ function init() {
         [0, 1, 0, 0],
         [0, 1, 0, 0],
       ],
+      stats: 0,
     },
     blockJ: {
       rot0: [
@@ -122,6 +123,7 @@ function init() {
         [1, 1, 0, 0],
         [0, 0, 0, 0],
       ],
+      stats: 0,
     },
     blockL: {
       rot0: [
@@ -148,6 +150,7 @@ function init() {
         [0, 1, 0, 0],
         [0, 0, 0, 0],
       ],
+      stats: 0,
     },
     blockO: {
       rot0: [
@@ -174,6 +177,7 @@ function init() {
         [0, 0, 0, 0],
         [0, 0, 0, 0],
       ],
+      stats: 0,
     },
     blockS: {
       rot0: [
@@ -200,6 +204,7 @@ function init() {
         [0, 1, 0, 0],
         [0, 0, 0, 0],
       ],
+      stats: 0,
     },
     blockT: {
       rot0: [
@@ -226,6 +231,7 @@ function init() {
         [0, 1, 0, 0],
         [0, 0, 0, 0],
       ],
+      stats: 0,
     },
     blockZ: {
       rot0: [
@@ -252,6 +258,7 @@ function init() {
         [1, 0, 0, 0],
         [0, 0, 0, 0],
       ],
+      stats: 0,
     },
   };
 
@@ -265,6 +272,7 @@ function init() {
   let currentRenderSquare; // the current square that will be rendered
 
   let currentBlock = null;
+  let nextBlock;
   let currentBlockRotation = 0;
 
   let testOrigin; // will use for rotation tests
@@ -314,7 +322,7 @@ function init() {
     currentPlayer.rowsRemainingUntilLevel = currentPlayer.rowsTotalUntilLevel;
     levelDisplay.textContent = currentPlayer.level;
     rowsRemainingDisplay.textContent = currentPlayer.rowsRemainingUntilLevel;
-
+    gridOverlay.style.backgroundColor = "rgba(0, 119, 255, 0.662)";
     overlayMessage.innerText = "Get Ready!";
     playButton.style.display = "none";
     playAgainButton.style.display = "none";
@@ -335,6 +343,7 @@ function init() {
   function newBlock() {
     resetBlockProperties();
     serveBlock();
+    updateStats();
     buildMiniGrid();
     renderNewPosition("active-block");
     blockFall();
@@ -346,6 +355,7 @@ function init() {
     window.removeEventListener("keydown", testRotation);
     overlayMessage.innerText = "Game Over!";
     playAgainButton.style.display = "flex";
+    gridOverlay.style.backgroundColor = "rgba(255, 0, 106, 0.662)";
     gridOverlay.style.display = "flex";
   }
 
@@ -357,6 +367,11 @@ function init() {
       currentPlayer.rowsRemainingUntilLevel = currentPlayer.rowsTotalUntilLevel;
       rowsRemainingDisplay.textContent = currentPlayer.rowsRemainingUntilLevel;
       blockFallSpeed -= levelSpeedIncrease;
+
+      // clearInterval(fallTimer);
+      // gridOverlay.style.display = "flex";
+      // overlayMessage.textContent = "Level Clear!";
+      // nextLevelButton.style.display = "flex";
     }
   }
 
@@ -370,15 +385,21 @@ function init() {
     }
   }
 
-let nextBlock;
+  function updateStats() {
+    allBlocks[`block${currentBlock}`].stats++;
+    document.querySelector(`.${currentBlock}-stats`).textContent =
+      allBlocks[`block${currentBlock}`].stats;
+  }
 
   function serveBlock() {
-    if (currentBlock === null){
-      currentBlock = possibleBlocks[Math.round(Math.random() * (possibleBlocks.length - 1))];
+    if (currentBlock === null) {
+      currentBlock =
+        possibleBlocks[Math.round(Math.random() * (possibleBlocks.length - 1))];
     } else {
       currentBlock = nextBlock;
     }
-    nextBlock = possibleBlocks[Math.round(Math.random() * (possibleBlocks.length - 1))];
+    nextBlock =
+      possibleBlocks[Math.round(Math.random() * (possibleBlocks.length - 1))];
     setBlockMatrix();
     // fixes the spawn origin for I-block, which spawns with a blank top row of its matrix
     if (currentBlock === "I") {
@@ -1093,7 +1114,7 @@ let nextBlock;
   }
 
   const miniGrid = document.querySelector(".mini-grid");
-  let nextBlockMatrix; 
+  let nextBlockMatrix;
 
   function buildMiniGrid() {
     // const miniGridSquares = [];
@@ -1111,8 +1132,7 @@ let nextBlock;
     }
 
     function setNextBlockMatrix() {
-      nextBlockMatrix =
-        allBlocks[`block${nextBlock}`]["rot0"];
+      nextBlockMatrix = allBlocks[`block${nextBlock}`]["rot0"];
     }
   }
 }
