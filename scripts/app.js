@@ -508,10 +508,9 @@ function init() {
         allStaticBlocks.forEach((square) => {
           if (parseInt(square.dataset.index) < index) {
             blocksToMoveDown.push(square);
-            console.log(square.dataset.index);
+
           }
         });
-        console.log(blocksToMoveDown);
 
         // make sure we're starting from the bottom-right square and working backwards & upwards:
         blocksToMoveDown = blocksToMoveDown.reverse();
@@ -642,6 +641,8 @@ function init() {
     currentRenderRow = origin;
     currentRenderSquare = origin;
     for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
+      
+
       currentRenderSquare = currentRenderRow;
       for (let indexInner = 0; indexInner < 4; indexInner++) {
         if (blockMatrix[indexOuter][indexInner] === 1) {
@@ -1122,9 +1123,7 @@ function init() {
     miniGrid.innerHTML = null;
     const miniGridSquareCount = 8;
     for (let i = 0; i < miniGridSquareCount; i++) {
-      console.log("build minigrid");
       const miniGridSquare = document.createElement("div");
-      console.log(currentBlockMatrix);
       if (nextBlockMatrix.flat()[i] === 1) {
         miniGridSquare.classList.add(`block-${nextBlock}`);
       }

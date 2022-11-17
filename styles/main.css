@@ -33,6 +33,7 @@ h1 {
   color: rgb(255, 0, 153);
 }
 
+
 /* Containers */
 
 .outer-container {
@@ -82,12 +83,7 @@ h1 {
   width: 100%;
 }
 
-.score-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
+
 
 .stats-outer-container {
   display: flex;
