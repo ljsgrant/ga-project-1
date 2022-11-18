@@ -21,52 +21,6 @@ function init() {
 
   const currentPlayer = new Player("Player1");
 
-  //#region Build Grid
-  const grid = document.querySelector(".grid");
-  const gridSquares = [];
-  const gridColumns = 14;
-  const gridRows = 24;
-  const gridSquareCount = gridColumns * gridRows;
-
-  function buildGrid() {
-    clearGrid();
-
-    for (let index = 0; index < gridSquareCount; index++) {
-      const gridSquare = document.createElement("div");
-      gridSquare.setAttribute("data-index", index);
-      if (index < gridColumns * 2) {
-        gridSquare.classList.add("top-of-grid");
-      }
-      if ((index - 2) % gridColumns === 0) {
-        gridSquare.classList.add("left-bounds");
-      }
-      if ((index + 3) % gridColumns === 0) {
-        gridSquare.classList.add("right-bounds");
-      }
-      if (index > gridColumns * gridRows - (gridColumns * 2 + 1)) {
-        gridSquare.classList.add("bottom-bounds", "out-of-bounds");
-      }
-      if (
-        index % gridColumns === 0 ||
-        (index - 1) % gridColumns === 0 ||
-        (index + 1) % gridColumns === 0 ||
-        (index + 2) % gridColumns === 0
-      ) {
-        gridSquare.setAttribute("class", "out-of-bounds");
-      }
-      // gridSquare.textContent = index;
-      gridSquares.push(gridSquare);
-      grid.appendChild(gridSquare);
-    }
-    function clearGrid() {
-      gridSquares.length = 0;
-      grid.innerHTML = null;
-    }
-  }
-  buildGrid();
-
-  //#endregion
-
   const scoreDisplay = document.querySelector(".score");
   scoreDisplay.innerText = currentPlayer.score;
 
@@ -262,28 +216,52 @@ function init() {
     },
   };
 
+  // Grid
+  const grid = document.querySelector(".grid");
+  const gridCells = [];
+  const gridRowCellCount = 14;
+  const gridRows = 24;
+  const gridCellCount = gridRowCellCount * gridRows;
+  const outOfBoundsRowsTop = 2;
+  const outOfBoundsRowsBottom = 2;
+  const outOfBoundsTopCellCount = gridRowCellCount * outOfBoundsRowsTop;
+  const outOfBoundsBottomCellCount = gridRowCellCount * outOfBoundsRowsBottom;
+
+  // blocks
   const possibleBlocks = ["I", "J", "L", "O", "S", "T", "Z"];
-
-  let currentBlockMatrix; // how to render the current block and its rotation
-
-  const spawnOrigin = 33; // where each block appears on the map
-  let currentOrigin = spawnOrigin; // where the block currently is on the map
-  let currentRenderRow; // where to start rendering a row
-  let currentRenderSquare; // the current square that will be rendered
-
   let currentBlock = null;
   let nextBlock;
   let currentBlockRotation = 0;
+  let currentBlockMatrix; 
+  const matrixHeight = 4;
+  const matrixWidth = 4;
+  const spawnOrigin = 33; 
+  let currentOrigin = spawnOrigin; 
+  let currentRenderRow; 
+  let currentRenderCell; 
 
-  let testOrigin; // will use for rotation tests
-  let currentTestBlockRotation; // will use for rotation tests
-  let testBlockMatrix; // use for test rotation before performing basic rotation or wall kick
+  // use for rotation tests
+  let testOrigin; 
+  let currentTestBlockRotation;
+  let testBlockMatrix;
 
-  let fallTimer; // cancel this to end current block fall
-  const startingSpeed = 800; // higher = slower. Blocks start new game falling at this speed.
-  let blockFallSpeed = startingSpeed; // higher = slower. Decrease as player advances in levels.
-  const levelSpeedIncrease = 50; // how much to speed up blockFallSpeed with each level
-  let obstructedSquares; // will use to check if block can continue falling
+  // block fall
+  let fallTimer; 
+  const startingSpeed = 800; // higher = slower.
+  let blockFallSpeed = startingSpeed; // higher = slower.
+  const levelSpeedIncrease = 50; 
+  let obstructedCells; 
+
+  // user inputs
+  const moveRightKey = "ArrowRight";
+  const moveLeftKey = "ArrowLeft";
+  const moveDownKey = "ArrowDown";
+  const rotateRightKey = 88;
+  const rotateLeftKey = 90;
+
+  // "next block" display
+  const miniGrid = document.querySelector(".mini-grid");
+  let nextBlockMatrix;
 
   // UI elements
   const gridOverlay = document.querySelector(".grid-overlay");
@@ -297,6 +275,42 @@ function init() {
   playButton.addEventListener("click", startGame);
   playAgainButton.addEventListener("click", startGame);
 
+  function buildGrid() {
+    clearGrid();
+
+    for (let index = 0; index < gridCellCount; index++) {
+      const gridCell = document.createElement("div");
+      gridCell.setAttribute("data-index", index);
+      if (index < outOfBoundsTopCellCount) {
+        gridCell.classList.add("top-of-grid", "out-of-bounds");
+      }
+      if ((index - 2) % gridRowCellCount === 0) {
+        gridCell.classList.add("left-bounds");
+      }
+      if ((index + 3) % gridRowCellCount === 0) {
+        gridCell.classList.add("right-bounds");
+      }
+      if (index > gridCellCount - (outOfBoundsBottomCellCount + 1)) {
+        gridCell.classList.add("bottom-bounds", "out-of-bounds");
+      }
+      if (
+        index % gridRowCellCount === 0 ||
+        (index - 1) % gridRowCellCount === 0 ||
+        (index + 1) % gridRowCellCount === 0 ||
+        (index + 2) % gridRowCellCount === 0
+      ) {
+        gridCell.classList.add("out-of-bounds");
+      }
+      // gridCell.textContent = index;
+      gridCells.push(gridCell);
+      grid.appendChild(gridCell);
+    }
+    function clearGrid() {
+      gridCells.length = 0;
+      grid.innerHTML = null;
+    }
+  }
+
   function setBlockMatrix() {
     currentBlockMatrix =
       allBlocks[`block${currentBlock}`][`rot${currentBlockRotation}`];
@@ -306,7 +320,7 @@ function init() {
     currentBlockRotation = 0;
     currentOrigin = spawnOrigin;
     currentRenderRow = spawnOrigin;
-    currentRenderSquare = spawnOrigin;
+    currentRenderCell = spawnOrigin;
   }
 
   function startGame() {
@@ -376,9 +390,9 @@ function init() {
   }
 
   function checkForGameOver() {
-    if (currentBlock !== "I" && currentOrigin < gridColumns * 3) {
+    if (currentBlock !== "I" && currentOrigin < gridRowCellCount * 3) {
       return true;
-    } else if (currentBlock === "I" && currentOrigin < gridColumns * 2) {
+    } else if (currentBlock === "I" && currentOrigin < gridRowCellCount * 2) {
       return true;
     } else {
       return false;
@@ -403,7 +417,7 @@ function init() {
     setBlockMatrix();
     // fixes the spawn origin for I-block, which spawns with a blank top row of its matrix
     if (currentBlock === "I") {
-      currentOrigin = spawnOrigin - gridColumns;
+      currentOrigin = spawnOrigin - gridRowCellCount;
     } else {
       currentOrigin = spawnOrigin;
     }
@@ -411,44 +425,44 @@ function init() {
 
   function moveBlockDown() {
     if (
-      checkObstructedSquaresBelow() === 0 &&
+      checkObstructedCellsBelow() === 0 &&
       document.querySelectorAll(".active-block.bottom-bounds").length === 0
     ) {
       clearOldPosition();
-      currentOrigin += gridColumns;
+      currentOrigin += gridRowCellCount;
       renderNewPosition("active-block");
     }
   }
 
-  function getCurrentActiveSquares(classSelector = ".active-block") {
+  function getCurrentActiveCells(classSelector = ".active-block") {
     return Array.from(document.querySelectorAll(classSelector));
   }
 
-  function checkObstructedSquaresBelow() {
-    const currentActiveSquares = getCurrentActiveSquares();
-    obstructedSquares = 0;
-    currentActiveSquares.forEach((activeSquare) => {
-      const squareBelow = parseInt(activeSquare.dataset.index) + gridColumns;
+  function checkObstructedCellsBelow() {
+    const currentActiveCells = getCurrentActiveCells();
+    obstructedCells = 0;
+    currentActiveCells.forEach((activeCell) => {
+      const cellBelow = parseInt(activeCell.dataset.index) + gridRowCellCount;
       if (
-        gridSquares[squareBelow].classList.contains("bottom-bounds") ||
-        gridSquares[squareBelow].classList.contains("static-block")
+        gridCells[cellBelow].classList.contains("bottom-bounds") ||
+        gridCells[cellBelow].classList.contains("static-block")
       ) {
-        obstructedSquares++;
+        obstructedCells++;
       }
     });
-    return obstructedSquares;
+    return obstructedCells;
   }
 
   function blockFall() {
     fallTimer = setInterval(() => {
-      const currentActiveSquares = getCurrentActiveSquares();
-      if (checkObstructedSquaresBelow() === 0) {
+      const currentActiveCells = getCurrentActiveCells();
+      if (checkObstructedCellsBelow() === 0) {
         moveBlockDown();
       } else {
         clearInterval(fallTimer);
         clearOldPosition();
         // add to stack:
-        addToStack(currentActiveSquares);
+        addToStack(currentActiveCells);
         clearRows();
         if (checkForGameOver() === true) {
           gameOver();
@@ -461,9 +475,9 @@ function init() {
       }
     }, blockFallSpeed);
 
-    function addToStack(currentActiveSquares) {
-      currentActiveSquares.forEach((activeSquare) =>
-        gridSquares[activeSquare.dataset.index].classList.add(
+    function addToStack(currentActiveCells) {
+      currentActiveCells.forEach((activeCell) =>
+        gridCells[activeCell.dataset.index].classList.add(
           "static-block",
           `block-${currentBlock}`
         )
@@ -472,21 +486,18 @@ function init() {
   }
 
   function clearRows() {
-    // index will be the start of the bottommost row that is within the left-bounds and bottom-bounds
     for (
       let index = parseInt(
-        gridSquares[gridSquares.length - gridColumns * 3 + 2].dataset.index
+        gridCells[gridCells.length - gridRowCellCount * 3 + 2].dataset.index
       ); // index starts at the lowest lefthand corner of the playable grid
-      index >= gridColumns * 2; // loop will stop before entering the top-bounds
-      index -= gridColumns // go up by one row each iteration
+      index >= gridRowCellCount * 2; // loop will stop before entering the top-bounds
+      index -= gridRowCellCount // go up by one row each iteration
     ) {
-      const rowToCheck = gridSquares.slice(index, index + 10);
-      if (
-        rowToCheck.every((square) => square.classList.contains("static-block"))
-      ) {
+      const rowToCheck = gridCells.slice(index, index + 10);
+      if (rowToCheck.every((cell) => cell.classList.contains("static-block"))) {
         // remove the complete row
-        rowToCheck.forEach((square) =>
-          square.classList.remove(
+        rowToCheck.forEach((cell) =>
+          cell.classList.remove(
             "static-block",
             "block-I",
             "block-O",
@@ -505,19 +516,18 @@ function init() {
 
         // get which blocks to move down (all blocks above the removed row)
         let blocksToMoveDown = [];
-        allStaticBlocks.forEach((square) => {
-          if (parseInt(square.dataset.index) < index) {
-            blocksToMoveDown.push(square);
-
+        allStaticBlocks.forEach((cell) => {
+          if (parseInt(cell.dataset.index) < index) {
+            blocksToMoveDown.push(cell);
           }
         });
 
-        // make sure we're starting from the bottom-right square and working backwards & upwards:
+        // make sure we're starting from the bottom-right cell and working backwards & upwards:
         blocksToMoveDown = blocksToMoveDown.reverse();
         // move the blocks down
-        blocksToMoveDown.forEach((square) => {
-          const squareClasses = Array.from(square.classList);
-          square.classList.remove(
+        blocksToMoveDown.forEach((cell) => {
+          const cellClasses = Array.from(cell.classList);
+          cell.classList.remove(
             "static-block",
             "block-I",
             "block-O",
@@ -528,10 +538,10 @@ function init() {
             "block-L"
           );
 
-          const squareBelow =
-            gridSquares[parseInt(square.dataset.index) + gridColumns];
-          squareClasses.forEach((squareClass) =>
-            squareBelow.classList.add(squareClass)
+          const cellBelow =
+            gridCells[parseInt(cell.dataset.index) + gridRowCellCount];
+          cellClasses.forEach((cellClass) =>
+            cellBelow.classList.add(cellClass)
           );
         });
         incrementScore();
@@ -548,67 +558,55 @@ function init() {
   }
 
   function moveBlock(event) {
-    const currentActiveSquares = getCurrentActiveSquares();
-    obstructedSquares = 0;
+    const currentActiveCells = getCurrentActiveCells();
+    obstructedCells = 0;
 
     switch (event.key) {
-      case "ArrowLeft":
-        moveBlockLeft();
+      case moveLeftKey:
+        move("left");
         break;
-      case "ArrowRight":
-        moveBlockRight();
+      case moveRightKey:
+        move("right");
         break;
-      case "ArrowDown":
+      case moveDownKey:
         moveBlockDown();
         break;
     }
-    function moveBlockLeft() {
-      // check if any of the squares left of current block are occupied
-      currentActiveSquares.forEach((activeSquare) => {
-        // get the square immediately to the left
-        const squareToLeft = parseInt(activeSquare.dataset.index) - 1;
-        // if it's obstructed, make obstructedSquares non-zero
-        if (gridSquares[squareToLeft].classList.contains("static-block")) {
-          obstructedSquares++;
+    function move(direction) {
+      currentActiveCells.forEach((activeCell) => {
+        let cellNeighbour;
+        if (direction === "left") {
+          cellNeighbour = parseInt(activeCell.dataset.index) - 1;
+        } else if (direction === "right") {
+          cellNeighbour = parseInt(activeCell.dataset.index) + 1;
+        } else {
+          throw "moveBlock() expects a direction (\"left\" or \"right\") as an argument! ";
+        }
+        if (gridCells[cellNeighbour].classList.contains("static-block")) {
+          obstructedCells++;
         }
       });
-      // move the block left if there are no obstructedSquares AND the block isn't at the left bounds
       if (
-        obstructedSquares === 0 &&
-        document.querySelectorAll(".active-block.left-bounds").length === 0
+        obstructedCells === 0 &&
+        document.querySelectorAll(`.active-block.${direction}-bounds`)
+          .length === 0
       ) {
         clearOldPosition();
-        currentOrigin -= 1;
-        renderNewPosition("active-block");
-      }
-    }
-    function moveBlockRight() {
-      // check if any of the squares right of current block are occupied
-      currentActiveSquares.forEach((activeSquare) => {
-        // get the square immediately to the right
-        const squareToRight = parseInt(activeSquare.dataset.index) + 1;
-        // if it's obstructed, make obstructedSquares non-zero
-        if (gridSquares[squareToRight].classList.contains("static-block")) {
-          obstructedSquares++;
+        if (direction === "left") {
+          currentOrigin -= 1;
+        } else if (direction === "right") {
+          currentOrigin += 1;
         }
-      });
-      // move the block left if there are no obstructedSquares AND the block isn't at the left bounds
-      if (
-        obstructedSquares === 0 &&
-        document.querySelectorAll(".active-block.right-bounds").length === 0
-      ) {
-        clearOldPosition();
-        currentOrigin += 1;
         renderNewPosition("active-block");
       }
     }
   }
 
   function rotateBlock(keyCode) {
-    if (obstructedSquares === 0) {
+    if (obstructedCells === 0) {
       switch (keyCode) {
         // z key to rotate left
-        case 90:
+        case rotateLeftKey:
           clearOldPosition();
           if (currentBlockRotation === 0) {
             currentBlockRotation = 270;
@@ -619,7 +617,7 @@ function init() {
           renderNewPosition("active-block");
           break;
         // x key to rotate right
-        case 88:
+        case rotateRightKey:
           clearOldPosition();
           if (currentBlockRotation === 270) {
             currentBlockRotation = 0;
@@ -639,23 +637,19 @@ function init() {
     blockMatrix = currentBlockMatrix
   ) {
     currentRenderRow = origin;
-    currentRenderSquare = origin;
-    for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
-      
-
-      currentRenderSquare = currentRenderRow;
-      for (let indexInner = 0; indexInner < 4; indexInner++) {
+    currentRenderCell = origin;
+    for (let indexOuter = 0; indexOuter < matrixHeight; indexOuter++) {
+      currentRenderCell = currentRenderRow;
+      for (let indexInner = 0; indexInner < matrixWidth; indexInner++) {
         if (blockMatrix[indexOuter][indexInner] === 1) {
-          gridSquares[currentRenderSquare].classList.add(classSelector);
+          gridCells[currentRenderCell].classList.add(classSelector);
           if (classSelector === "active-block") {
-            gridSquares[currentRenderSquare].classList.add(
-              `block-${currentBlock}`
-            );
+            gridCells[currentRenderCell].classList.add(`block-${currentBlock}`);
           }
         }
-        currentRenderSquare++;
+        currentRenderCell++;
       }
-      currentRenderRow += gridColumns;
+      currentRenderRow += gridRowCellCount;
     }
   }
 
@@ -664,25 +658,23 @@ function init() {
     origin = currentOrigin
   ) {
     currentRenderRow = origin;
-    currentRenderSquare = origin;
-    for (let indexOuter = 0; indexOuter < 4; indexOuter++) {
-      currentRenderSquare = currentRenderRow;
-      for (let indexInner = 0; indexInner < 4; indexInner++) {
-        if (gridSquares[currentRenderSquare] !== undefined) {
-          if (
-            gridSquares[currentRenderSquare].classList.contains(classSelector)
-          ) {
-            gridSquares[currentRenderSquare].classList.remove(classSelector);
+    currentRenderCell = origin;
+    for (let indexOuter = 0; indexOuter < matrixHeight; indexOuter++) {
+      currentRenderCell = currentRenderRow;
+      for (let indexInner = 0; indexInner < matrixWidth; indexInner++) {
+        if (gridCells[currentRenderCell] !== undefined) {
+          if (gridCells[currentRenderCell].classList.contains(classSelector)) {
+            gridCells[currentRenderCell].classList.remove(classSelector);
             if (classSelector === "active-block") {
-              gridSquares[currentRenderSquare].classList.remove(
+              gridCells[currentRenderCell].classList.remove(
                 `block-${currentBlock}`
               );
             }
           }
         }
-        currentRenderSquare++;
+        currentRenderCell++;
       }
-      currentRenderRow += gridColumns;
+      currentRenderRow += gridRowCellCount;
     }
   }
 
@@ -692,19 +684,19 @@ function init() {
   }
 
   function testRotation(event) {
-    let occupiedSquares;
-    let outOfBoundsSquares;
+    let occupiedCells;
+    let outOfBoundsCells;
 
     // set test rotation according to which way player wants to rotate
     switch (event.keyCode) {
-      case 90:
+      case rotateLeftKey:
         if (currentBlockRotation === 0) {
           currentTestBlockRotation = 270;
         } else {
           currentTestBlockRotation = currentBlockRotation - 90;
         }
         break;
-      case 88:
+      case rotateRightKey:
         if (currentBlockRotation === 270) {
           currentTestBlockRotation = 0;
         } else {
@@ -716,21 +708,21 @@ function init() {
 
     function tryRotate() {
       renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
-      outOfBoundsSquares = document.querySelectorAll(
+      outOfBoundsCells = document.querySelectorAll(
         ".block-rotate-test.out-of-bounds"
       );
-      occupiedSquares = document.querySelectorAll(
+      occupiedCells = document.querySelectorAll(
         ".block-rotate-test.static-block"
       );
       clearOldPosition("block-rotate-test", testOrigin);
-      if (outOfBoundsSquares.length === 0 && occupiedSquares.length === 0) {
+      if (outOfBoundsCells.length === 0 && occupiedCells.length === 0) {
         clearOldPosition();
         currentOrigin = testOrigin;
         rotateBlock(event.keyCode);
         return true;
       } else {
-        outOfBoundsSquares = null;
-        occupiedSquares = null;
+        outOfBoundsCells = null;
+        occupiedCells = null;
       }
     }
 
@@ -740,7 +732,7 @@ function init() {
     } else if (currentBlock === "I") {
       // * tests for I
       // rotating left (z key)
-      if (event.keyCode === 90) {
+      if (event.keyCode === rotateLeftKey) {
         switch (currentBlockRotation) {
           case 0:
             testOrigin = currentOrigin; // test 1 (basic rotation)
@@ -755,11 +747,11 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 - gridColumns * 2; // test 4
+            testOrigin = currentOrigin - 1 - gridRowCellCount * 2; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 2 + gridColumns; // test 5
+            testOrigin = currentOrigin + 2 + gridRowCellCount; // test 5
             if (tryRotate() === true) {
               return;
             }
@@ -777,11 +769,11 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 2 - gridColumns; // test 4
+            testOrigin = currentOrigin + 2 - gridRowCellCount; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 + gridColumns * 2; // test 5
+            testOrigin = currentOrigin - 1 + gridRowCellCount * 2; // test 5
             if (tryRotate() === true) {
               return;
             }
@@ -799,11 +791,11 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 + gridColumns * 2; // test 4
+            testOrigin = currentOrigin + 1 + gridRowCellCount * 2; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 2 - gridColumns; // test 5
+            testOrigin = currentOrigin - 2 - gridRowCellCount; // test 5
             if (tryRotate() === true) {
               return;
             }
@@ -821,18 +813,18 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 2 + gridColumns; // test 4
+            testOrigin = currentOrigin - 2 + gridRowCellCount; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 - gridColumns * 2; // test 5
+            testOrigin = currentOrigin + 1 - gridRowCellCount * 2; // test 5
             if (tryRotate() === true) {
               return;
             }
             break;
         }
         // rotating right (x key)
-      } else if (event.keyCode === 88) {
+      } else if (event.keyCode === rotateRightKey) {
         switch (currentBlockRotation) {
           case 0:
             testOrigin = currentOrigin; // test 1 (basic rotation)
@@ -847,11 +839,11 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 2 + gridColumns; // test 4
+            testOrigin = currentOrigin - 2 + gridRowCellCount; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 - gridColumns * 2; // test 5
+            testOrigin = currentOrigin + 1 - gridRowCellCount * 2; // test 5
             if (tryRotate() === true) {
               return;
             }
@@ -869,11 +861,11 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 - gridColumns * 2; // test 4
+            testOrigin = currentOrigin - 1 - gridRowCellCount * 2; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 2 + gridColumns; // test 5
+            testOrigin = currentOrigin + 2 + gridRowCellCount; // test 5
             if (tryRotate() === true) {
               return;
             }
@@ -891,11 +883,11 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 2 - gridColumns; // test 4
+            testOrigin = currentOrigin + 2 - gridRowCellCount; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 + gridColumns * 2; // test 5
+            testOrigin = currentOrigin - 1 + gridRowCellCount * 2; // test 5
             if (tryRotate() === true) {
               return;
             }
@@ -913,11 +905,11 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 + gridColumns * 2; // test 4
+            testOrigin = currentOrigin + 1 + gridRowCellCount * 2; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 2 - gridColumns; // test 5
+            testOrigin = currentOrigin - 2 - gridRowCellCount; // test 5
             if (tryRotate() === true) {
               return;
             }
@@ -927,7 +919,7 @@ function init() {
     } else {
       // * tests for all other blocks
       // rotating left (z key)
-      if (event.keyCode === 90) {
+      if (event.keyCode === rotateLeftKey) {
         switch (currentBlockRotation) {
           case 0:
             testOrigin = currentOrigin; // test 1 (basic rotation)
@@ -938,15 +930,15 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 - gridColumns; // test 3
+            testOrigin = currentOrigin + 1 - gridRowCellCount; // test 3
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + gridColumns * 2; // test 4
+            testOrigin = currentOrigin + gridRowCellCount * 2; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 + gridColumns * 2; // test 5
+            testOrigin = currentOrigin + 1 + gridRowCellCount * 2; // test 5
             if (tryRotate() === true) {
               return;
             }
@@ -960,15 +952,15 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 + gridColumns; // test 3
+            testOrigin = currentOrigin + 1 + gridRowCellCount; // test 3
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - gridColumns * 2; // test 4
+            testOrigin = currentOrigin - gridRowCellCount * 2; // test 4
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 - gridColumns * 2; // test 5
+            testOrigin = currentOrigin + 1 - gridRowCellCount * 2; // test 5
             if (tryRotate() === true) {
               return;
             }
@@ -982,15 +974,15 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 - gridColumns;
+            testOrigin = currentOrigin - 1 - gridRowCellCount;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + gridColumns * 2;
+            testOrigin = currentOrigin + gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 + gridColumns * 2;
+            testOrigin = currentOrigin - 1 + gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
@@ -1004,22 +996,22 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 + gridColumns;
+            testOrigin = currentOrigin - 1 + gridRowCellCount;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - gridColumns * 2;
+            testOrigin = currentOrigin - gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 - gridColumns * 2;
+            testOrigin = currentOrigin - 1 - gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
             break;
         }
         // rotating right (x key)
-      } else if (event.keyCode === 88) {
+      } else if (event.keyCode === rotateRightKey) {
         switch (currentBlockRotation) {
           case 0:
             testOrigin = currentOrigin;
@@ -1030,15 +1022,15 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 - gridColumns;
+            testOrigin = currentOrigin - 1 - gridRowCellCount;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + gridColumns * 2;
+            testOrigin = currentOrigin + gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 + gridColumns * 2;
+            testOrigin = currentOrigin - 1 + gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
@@ -1052,15 +1044,15 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 + gridColumns;
+            testOrigin = currentOrigin + 1 + gridRowCellCount;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - gridColumns * 2;
+            testOrigin = currentOrigin - gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 - gridColumns * 2;
+            testOrigin = currentOrigin + 1 - gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
@@ -1074,15 +1066,15 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 - gridColumns;
+            testOrigin = currentOrigin + 1 - gridRowCellCount;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + gridColumns * 2;
+            testOrigin = currentOrigin + gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin + 1 + gridColumns * 2;
+            testOrigin = currentOrigin + 1 + gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
@@ -1096,15 +1088,15 @@ function init() {
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 + gridColumns;
+            testOrigin = currentOrigin - 1 + gridRowCellCount;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - gridColumns * 2;
+            testOrigin = currentOrigin - gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
-            testOrigin = currentOrigin - 1 - gridColumns * 2;
+            testOrigin = currentOrigin - 1 - gridRowCellCount * 2;
             if (tryRotate() === true) {
               return;
             }
@@ -1114,22 +1106,18 @@ function init() {
     }
   }
 
-  const miniGrid = document.querySelector(".mini-grid");
-  let nextBlockMatrix;
-
   function buildMiniGrid() {
-    // const miniGridSquares = [];
+    // const miniGridCells = [];
     setNextBlockMatrix();
     miniGrid.innerHTML = null;
-    const miniGridSquareCount = 8;
-    for (let i = 0; i < miniGridSquareCount; i++) {
-      const miniGridSquare = document.createElement("div");
+    const miniGridCellCount = 8;
+    for (let i = 0; i < miniGridCellCount; i++) {
+      const miniGridCell = document.createElement("div");
       if (nextBlockMatrix.flat()[i] === 1) {
-        miniGridSquare.classList.add(`block-${nextBlock}`);
+        miniGridCell.classList.add(`block-${nextBlock}`);
       }
-      miniGrid.appendChild(miniGridSquare);
+      miniGrid.appendChild(miniGridCell);
     }
-
     function setNextBlockMatrix() {
       nextBlockMatrix = allBlocks[`block${nextBlock}`]["rot0"];
     }

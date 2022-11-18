@@ -50,7 +50,7 @@ h1 {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 10px;
+  padding: 5px 10px;
   margin: 5px 0px;
   border-radius: 20px;
   background-color: rgb(255, 245, 210);
@@ -65,8 +65,11 @@ h1 {
   width: 100%;
 }
 
-.title {
-  width: 100%;
+.readout{
+  border-radius: 20px;
+  width: 70%;
+  background-color: rgb(233, 188, 188);;
+  font-size: 120%;
 }
 
 .left-container,
@@ -82,8 +85,6 @@ h1 {
 .right-container_top {
   width: 100%;
 }
-
-
 
 .stats-outer-container {
   display: flex;
@@ -121,7 +122,7 @@ h1 {
   justify-content: center;
   flex-shrink: 0;
   margin: 0px 10px;
-  background-color: rgb(240, 163, 163);
+  background-color: rgb(255, 245, 210);
   padding: 15px;
   height: 100%;
 }
@@ -134,15 +135,16 @@ h1 {
   height: 100%;
   width: 260px;
   justify-content: center;
-  padding: 0px -107px;
+  padding: 5px;
   border-radius: 10px;
-  border: 5px solid rgb(195, 126, 126);
+  background-color: rgb(233, 188, 188);
+
 }
 
 .grid div {
   height: 5%;
   width: 10%;
-  border: 1px solid rgb(240, 163, 163);
+  border: 1px solid rgb(233, 188, 188);
   border-radius: 8.5px;
   box-sizing: border-box;
 }
@@ -202,7 +204,7 @@ h1 {
 }
 
 .block-I {
-  background-color: rgb(0, 202, 202);
+  background-color: rgb(0, 155, 155);
 }
 
 .block-O {
