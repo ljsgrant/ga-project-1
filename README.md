@@ -10,11 +10,11 @@ https://ljsgrant.github.io/ga-project-1/
 
 ![screengrab of finished project](assets/images/readme/project-1.png 'Tetris')
 
-<br>
+<br />
 
 ---
 
-<br>
+<br />
 
 # Write-up of Build Process
 
@@ -44,7 +44,7 @@ https://ljsgrant.github.io/ga-project-1/
 - **[Bugs](#bugs)**<br/>
 - **[Future Improvements](#future-improvements)**<br/>
 
-<br>
+<br />
 
 ---
 
@@ -61,7 +61,7 @@ https://ljsgrant.github.io/ga-project-1/
 
 [&#9650; _Back to contents_](#contents)
 
-<br>
+<br />
 
 ---
 ## Brief
@@ -91,7 +91,7 @@ Students were then given a choice from a selection of different games, ranked in
 
 [&#9650; _Back to contents_](#contents)
 
-<br>
+<br />
 
 ---
 ## Planning
@@ -173,7 +173,7 @@ I knew I would need CSS classes for each type of block to render it on screen, b
 
 [&#9650; _Back to contents_](#contents)
 
-<br>
+<br />
 
 ---
 ## Build/Code Process
@@ -542,20 +542,19 @@ At this point all the main features were added, and the game played like Tetris!
 
 [&#9650; _Back to contents_](#contents)
 
-<br>
+<br />
 
 ### Styling & Bonus Functionality
 
 I used the last day or so of my time on the project to add several finishing touches, improvements, and bonus features:
 * Styling: I did this quite quickly, as I felt more comfortable about reworking the CSS later to add polish than delivering a game with half-finished functionality. I went with pastel colours and rounded borders on containers and the blocks, to push everything away from the blocky look I’d been staring at for most of the process, and imported the Sono font to match the rounded style.
 * I added a start game button, and a “game over/play again?” screen. I used a div with absolute positioning and a translucent background-color to create a banner, and then toggled its CSS display property in each function that handled starting or ending the game.
-* Levelling up and speeding up the blocks with each level. I did this by incrementing the currentPlayer.level and increasing the blockFallSpeed (which controls the fallTimer interval) when the player has cleared a given number of rows.
-* A 3-second countdown before the game starts, to give the player time to get their hands on the keyboard - this is just a setInterval that
-* A "next-up block view", telling the player which block was coming next. To implement this, I simply switched the logic for serving blocks to a nextBlock variable rather than the currentBlock, and then assigned current block to the “previous” next block before choosing a “new” nextBlock. Now the game serves a block whilst the player is still positioning the previous one, renders it to the next-up block viewer, and then only renders it to the screen once the previous one has been placed. I chose to render the viewer programmatically rather than just showing a static image of the next block, so that any styling changed wouldn’t mean having to update all the images of the blocks. Next for this feature, I would like to figure out a way to keep each block centred in the viewer.
+* Levelling up and speeding up the blocks with each level. I did this by incrementing the `currentPlayer.level` and increasing the `blockFallSpeed` (which controls the `fallTimer` interval) when the player has cleared a given number of rows.
+* A "next-up block view", telling the player which block was coming next. To implement this, I simply switched the logic for serving blocks to a `nextBlock` variable rather than the `currentBlock`, and then assigned current block to the “previous” next block before choosing a “new” `nextBlock`. Now the game serves a block whilst the player is still positioning the previous one, renders it to the next-up block viewer, and then only renders it to the screen once the previous one has been placed. I chose to render the viewer programmatically rather than just showing a static image of the next block, so that any styling changed wouldn’t mean having to update all the images of the blocks. Next for this feature, I would like to figure out a way to keep each block centred in the viewer.
 
 [&#9650; _Back to contents_](#contents)
 
-<br>
+<br />
 
 ---
 
@@ -566,7 +565,7 @@ I used the last day or so of my time on the project to add several finishing tou
 
 [&#9650; _Back to contents_](#contents)
 
-<br>
+<br />
 
 ---
 
@@ -577,7 +576,7 @@ I used the last day or so of my time on the project to add several finishing tou
 
 [&#9650; _Back to contents_](#contents)
 
-<br>
+<br />
 
 ---
 
@@ -589,18 +588,18 @@ I used the last day or so of my time on the project to add several finishing tou
 
 [&#9650; _Back to contents_](#contents)
 
-<br>
+<br />
 
 ---
 
 ## Bugs
 
-    	When the player uses the arrow key to move the block down, there is a varying amount of lag before the block is added to the stack and/or a row is cleared. This is because addToStack() and clearRows() are only firing with the fallTimer interval; if the player uses the down-arrow to drop the block, this may be out of sync with the fallTimer, meaning there is a delay until the functions fire. This could be fixed by refactoring the code so the functions fire whenever the player moves the block.
-    	The “Play” button will sometimes animate but not start the game when clicked. This can be avoided by clicking near the centre of the button or clicking very quickly, so it seems that because the animation is achieved by reducing the button’s scale, if the mouse is too far from the centre of the button then it will shrink so the mouse is no longer over the button and therefore no “click” event is registered by the eventListener. This could be fixed by changing the animation, listening for a different event, or having separate elements for the animation and the eventListener so the clickable area does not shrink.
+* When the player uses the arrow key to move the block down, there is a varying amount of lag before the block is added to the stack and/or a row is cleared. This is because `addToStack()` and `clearRows()` are only firing with the `fallTimer` interval; if the player uses the down-arrow to drop the block, this may be out of sync with the `fallTimer`, meaning there is a delay until the functions fire. This could be fixed by refactoring the code so the functions fire whenever the player moves the block.
+* The “Play” button will sometimes animate but not start the game when clicked. This can be avoided by clicking near the centre of the button or clicking very quickly, so it seems that because the animation is achieved by reducing the button’s scale, if the mouse is too far from the centre of the button then it will shrink so the mouse is no longer over the button and therefore no “click” event is registered by the eventListener. This could be fixed by changing the animation, listening for a different event, or having separate elements for the animation and the eventListener so the clickable area does not shrink.
 
 [&#9650; _Back to contents_](#contents)
 
-<br>
+<br />
 
 ---
 
