@@ -48,7 +48,6 @@ https://ljsgrant.github.io/ga-project-1/
 
 ---
 
-<button> [&#9650; _Back to contents_](#contents)</button>
 ## Technologies Used
 
 
@@ -62,8 +61,9 @@ https://ljsgrant.github.io/ga-project-1/
 
 <br>
 
+[&#9650; _Back to contents_](#contents)
+
 ---
-<button> [&#9650; _Back to contents_](#contents)</button>
 ## Brief
 
 The overall brief was to:
@@ -91,7 +91,7 @@ Students were then given a choice from a selection of different games, ranked in
 
 <br>
 
-<button> [&#9650; _Back to contents_](#contents)</button>
+[&#9650; _Back to contents_](#contents)
 
 ---
 ## Planning
@@ -100,7 +100,7 @@ Students were then given a choice from a selection of different games, ranked in
 
 I began by doing general research into Tetris, and found that there are fairly clear guidelines for how official Tetris games should play (as covered here: [tetris.wiki/Tetris_Guideline](https://tetris.wiki/Tetris_Guideline)). Although I was aiming to fulfil the brief provided rather than to make an official Tetris game with perfect accuracy, I decided to default to the guidelines if in any doubt over how a given feature should behave, rather than wasting time reinventing the wheel for tried-and-tested features. This really helped me on how to approach each piece of logic, and most crucially for how to handle rotation when a block is obstructed by a wall or other blocks, using the “wall kick” functionality.
 
-<button> [&#9650; _Back to contents_](#contents)</button>
+[&#9650; _Back to contents_](#contents)
 
 ### To-Do List of features
 
@@ -122,7 +122,7 @@ A levelling-up mechanic, to track the player’s progress and speed up block fal
 The classic “next block” feature, allowing the player to see which block will fall after the current one, meaning they can plan a more effective strategy;
 Audio to bring the game to life.
 
-<button> [&#9650; _Back to contents_](#contents)</button>
+[&#9650; _Back to contents_](#contents)
 
 ### Pseudocoding
 
@@ -131,6 +131,8 @@ Audio to bring the game to life.
 I made a basic wireframe to better visualise the play grid and how blocks could move on it, then worked through each item on my to-do list with pseudocode, making sure I had a plan for how to tackle each problem before I started to code for real.
 
 ![wireframe of page layout and tetris play grid](assets/images/readme/project-1-wireframe.png 'Wireframe')
+
+[&#9650; _Back to contents_](#contents)
 
 #### Rendering Blocks and Basic Rotation
 
@@ -145,6 +147,8 @@ For basic rotation, I considered two options:
 
 I decided to go with the second option as the blocks never change beyond 4 rotation states and there aren’t an excessive quantity of them to hard-code. It also means we don’t have to worry about rotation origins being different for different blocks, and I expected a bonus to be easier debugging: it’s easy to “see” each rotation of the block when looking at the matrices, and therefore easy to check expected behaviour and make changes by “drawing” the block with 1s and 0s. An obvious downside is the additional lines of code this takes up, but I figured the tradeoff was worth it as I could press on with adding more complex functionality rather than spending time on rotation calculations for a non-dynamic set of blocks.
 
+[&#9650; _Back to contents_](#contents)
+
 #### Block Movement
 
 I settled on the grid being an array of divs, so moving the block right would mean incrementing each cell’s index by 1, moving left would decrement by 1, and moving down would increment by an amount equal to the number of cells in a row. (In hindsight I believe there was a better way to do this – more on this in the build process).
@@ -153,11 +157,15 @@ I settled on the grid being an array of divs, so moving the block right would me
 
 I planned to track the block’s position using a `currentOrigin` variable, which would be the top-left corner of the block matrix. `currentOrigin` would start equal to a const `spawnOrigin` when a block first appears, and then be incremented or decremented to move the block.
 
+[&#9650; _Back to contents_](#contents)
+
 #### Limiting left/right movement
 
 To stop the blocks moving off the edges of the play grid, I planned to add a “bounds” class to the leftmost and rightmost columns. If any cells contained the block class and a bounds class, I would disallow further movement in that direction. I also planned to use a similar method to stop blocks at the bottom of the play grid.
 
 ![planning block movement](assets/images/readme/project-1-planning-stop-at-bounds.png 'Planning')
+
+[&#9650; _Back to contents_](#contents)
 
 #### Stopping at the Stack
 
@@ -166,8 +174,9 @@ I knew I would need CSS classes for each type of block to render it on screen, b
 
 <br>
 
+[&#9650; _Back to contents_](#contents)
+
 ---
-<button> [&#9650; _Back to contents_](#contents)</button>
 ## Build/Code Process
 
 ### Building the Play Grid
@@ -175,6 +184,8 @@ I knew I would need CSS classes for each type of block to render it on screen, b
 I began by creating a standard Tetris play grid of 10x20 playable cells, writing a `buildGrid()` function with a for loop that creates divs, gives them a data-index attribute that increments by 1 with each iteration, pushes them onto a `gridCells` array, and then adds them to a grid parent element in the DOM with `element.appendChild()`. This way each cell in the grid can be targeted with its data-index. Also I could assign CSS classes to rows and columns, which would be useful for adding “bounds” classes to the rows and columns at the edge of the grid.
 
 In hindsight I think it would have been better to build the grid with a parent array of rows, and nested sub-arrays for the cells in each row, making it simpler to keep track of rows and their cells separately, making for more readable code vs. messier calculations to check if a cell is at the left, right, top or bottom of the grid. This is a key area I want to go back and rework.
+
+[&#9650; _Back to contents_](#contents)
 
 ### Rendering Blocks
 
@@ -235,15 +246,21 @@ function renderNewPosition(
   }
 ```
 
+[&#9650; _Back to contents_](#contents)
+
 ### Basic Movement
 
 With the `renderNewPosition()` function, basic movement is as easy as incrementing/decrementing the `currentOrigin` in the direction of movement and calling `renderNewPosition()`. However this alone doesn’t clear the block’s old position,  meaning initially a block left a trail on the grid whenever it moved. I took care of this with a `clearOldPosition()` function, which basically does the reverse of `renderNewPosition()`, calling `classList.remove()` to clear the active block from the grid.
 
 To put all of this into practice I wrote a `moveBlock()` function which checks which arrow key the player presses, and calls a child function for the direction of movement: this in turn calls `clearOldPosition()`, increments or decrements `currentOrigin`, and then calls `renderNewPosition()`. Now the block correctly moves in the player’s chosen direction!
 
+[&#9650; _Back to contents_](#contents)
+
 ### Falling Blocks
 
 To make the blocks move down the grid of their own accord, I wrote a `blockFall()` function with a `setInterval()` to repeatedly call  `moveBlockDown()`. The speed the block falls at is controlled by a `blockFallSpeed` const, allowing me to change the speed programmatically and giving the option to later increase the speed as the player progresses through levels.
+
+[&#9650; _Back to contents_](#contents)
 
 ### Limiting Block Movement & Adding Blocks to the Stack
 
@@ -264,6 +281,8 @@ if ((index - 2) % gridRowCellCount === 0) {
 
 
 Now before moving the block left or right, we can check if the `active-block` is occupying any cells which also have the `left-bounds` or `right-bounds` class. I also added a `checkObstructedCellsBelow()` function to return the number of cells below the active block which contain the `bottom-bounds` or a static block. If this returns zero, we continue to fire `moveBlockDown()` from `blockFall()`.
+
+[&#9650; _Back to contents_](#contents)
 
 ### Adding Blocks to the Stack
 
@@ -318,6 +337,8 @@ Finally I styled the `out-of-bounds` cells with 0 width / height, so only the pl
 ![bounds cells 3](assets/images/readme/project-1-out-of-bounds-3.png 'Bounds cells 3')
 
 
+[&#9650; _Back to contents_](#contents)
+
 ### Basic Rotation
 
 As I had hard-coded the blocks’ 4 rotation-states, basic rotation was a matter of looking up the matrix for a given block and given rotation in my `allBlocks` object, then re-rendering the block with this new matrix. I wrote a `setBlockMatrix()` function to perform the lookup:
@@ -365,6 +386,8 @@ function rotateBlock(keyCode) {
     }
   }
 ```
+[&#9650; _Back to contents_](#contents)
+
 ### Clearing Rows
 
 My `clearRows()` function uses a for loop to slice the grid into rows, excluding any cells that are outside the playable area (this is one place that having nested arrays for each row would simplify things), and checks each row to see if all cells contain the static-block class using `Array.every()`. If every cell is filled then we use a `forEach` to call the `clearCell()` function on each cell, before getting all remaining static blocks above the cleared row (by checking if their index is < the index of the cleared row), and using another `forEach` to clear the `static-block` class of each cell and then add it to the cell immediately below. `clearRows()` fires with the `fallTimer` interval, so it checks for new rows every time the block moves down.
@@ -396,9 +419,13 @@ getCellsToMoveDown(index).forEach((cell) => {
       }
     }
 ```
+[&#9650; _Back to contents_](#contents)
+
 ### Game Over
 
 To allow the game to end when the stack reaches the top of the grid, I wrote a `checkForGameOver()` function that returns true if the `currentOrigin` is within a certain distance of the top of the grid, and a `gameOver()` function which clears the `fallTimer` interval and displays a Game Over screen.
+
+[&#9650; _Back to contents_](#contents)
 
 ### Giving Blocks Different Colours
 
@@ -433,6 +460,9 @@ function clearRows() {
     }
   }
 ```
+
+[&#9650; _Back to contents_](#contents)
+
 ### Advanced Rotation: adding Wall Kicks
 
 From [Tetris.fandom.com](http://Tetris.fandom.com):
@@ -511,6 +541,8 @@ At this point all the main features were added, and the game played like Tetris!
 
 <br>
 
+[&#9650; _Back to contents_](#contents)
+
 ### Styling & Bonus Functionality
 
 I used the last day or so of my time on the project to add several finishing touches, improvements, and bonus features:
@@ -522,6 +554,8 @@ I used the last day or so of my time on the project to add several finishing tou
 
 <br>
 
+[&#9650; _Back to contents_](#contents)
+
 ---
 
 ## Challenges
@@ -531,6 +565,8 @@ I used the last day or so of my time on the project to add several finishing tou
 
 <br>
 
+[&#9650; _Back to contents_](#contents)
+
 ---
 
 ## Wins
@@ -539,6 +575,8 @@ I used the last day or so of my time on the project to add several finishing tou
 * The "next-up block viewer": this small bit of functionality adds more strategy to the game, and I enjoyed repurposing the grid and block matrix to render the block as part of the UI, as well as refactoring the code to select each block one block in advance of it being served to the player.
 
 <br>
+
+[&#9650; _Back to contents_](#contents)
 
 ---
 
@@ -550,6 +588,8 @@ I used the last day or so of my time on the project to add several finishing tou
 
 <br>
 
+[&#9650; _Back to contents_](#contents)
+
 ---
 
 ## Bugs
@@ -558,6 +598,8 @@ I used the last day or so of my time on the project to add several finishing tou
     	The “Play” button will sometimes animate but not start the game when clicked. This can be avoided by clicking near the centre of the button or clicking very quickly, so it seems that because the animation is achieved by reducing the button’s scale, if the mouse is too far from the centre of the button then it will shrink so the mouse is no longer over the button and therefore no “click” event is registered by the eventListener. This could be fixed by changing the animation, listening for a different event, or having separate elements for the animation and the eventListener so the clickable area does not shrink.
 
 <br>
+
+[&#9650; _Back to contents_](#contents)
 
 ---
 
@@ -573,3 +615,4 @@ Responsive design: this was a stretch goal in the original brief, so it would be
 * A “level clear” screen – giving the player a moment to pause before continuing to the next level.
 * Leaderboard using localStorage - again a stretch goal from the original brief; would be good to add for this reason.
 
+[&#9650; _Back to contents_](#contents)
