@@ -157,7 +157,10 @@ To stop the blocks moving off the edges of the play grid, I planned to add a “
 I knew I would need CSS classes for each type of block to render it on screen, but also opted to have a generalised static-block class, so I could do a single check for if the active-block was about to move into an occupied cell.
 ￼
 
-————————
+<br>
+
+---
+
 ## Build/Code Process
 
 ### Building the Play Grid
@@ -432,17 +435,22 @@ From [Tetris.fandom.com](http://Tetris.fandom.com):
 There are various wall kick systems in Tetris games, and luckily plenty of good documentation from fans. After my some research I decided on the Standard Rotation System (SRS), which seemed to provide smarter functionality and offer more of a fun challenge to implement than some of the simpler mechanics.
 
 This was probably the toughest part of the project to figure out. For the SRS, each block needs to attempt 4 x-axis and/or y-axis translations if basic rotation fails, to see if it can be placed somewhere nearby. The tests are different for:
-each rotation-state;
-whether the block is being rotated left or right;
-the I-block vs all other blocks.
+* each rotation-state;
+* whether the block is being rotated left or right;
+* the I-block vs all other blocks.
+
 This means that there are 80 tests to implement in total! Luckily working from the SRS meant I didn’t have to come up with my own system for how each block should behave - only to figure out the logic for the existing mechanic.
 
-To tackle this, I grabbed SRS test data fromtetris.fandom.com/wiki/SRS, transposing the wiki's rotation notation to degrees and direction for clarity’s sake:
-￼
-Having this as a checklist was useful for keeping track of which tests I had already implemented – after writing the first 40 or so they started to blur together…!
+To tackle this, I grabbed SRS test data from [tetris.fandom.com/wiki/SRS](https://tetris.fandom.com/wiki/SRS), transposing the wiki's rotation notation to degrees and direction for clarity’s sake:
 
-My first step for implementing the SRS was to write a tryRotate() function which spawns an invisible test block with the CSS class block-rotate-test at a position controlled by a testOrigin variable. I then used document.querySelectorAll to return an array of any cells in the grid that have the block-rotate-test class plus either out-of-bounds  or static-block . If the array.length === 0 in both cases, the function will set the currentOrigin for the active block equal to the testOrigin, call rotateBlock() to perform the rotation, and return true. Otherwise the function will not return true and no rotation is performed.
 
+![Wall kick data](/assets/images/readme/project-1-wall-kick-data.png)
+
+Having this as a checklist was useful for keeping track of which tests I had already implemented – after writing the first 40 or so they started to blur together…
+
+My first step for implementing the SRS was to write a `tryRotate()` function which spawns an invisible test block with the CSS class `block-rotate-tes`t at a position controlled by a `testOrigin` variable. I then used `document.querySelectorAll` to return an array of any cells in the grid that have the `block-rotate-test` class plus either `out-of-bounds` or `static-block`. If the `array.length === 0` in both cases, the function will set the `currentOrigin` for the active block equal to the `testOrigin`, call `rotateBlock()` to perform the rotation, and return true. Otherwise the function will not return true and no rotation is performed.
+
+```js 
 function tryRotate() {
   renderNewPosition("block-rotate-test", testOrigin, testBlockMatrix);
   outOfBoundsCells = document.querySelectorAll(
@@ -460,9 +468,11 @@ function tryRotate() {
     occupiedCells = null;
   }
 }
+```
 
-The second step was combining this function with the translation tests. To run each test I used an if statement to check if the block is being rotated left or right, then switch statements with a case for each rotation-state, which updates the testOrigin variable accordingly and calls tryRotate(). If tryRotate() === true, a rotation has been successfully performed and we return out of the switch statement. Otherwise we progress to the next test, updating testOrigin to a new test position, calling tryRotate() again with the new value, and so on. Finally if all five tests fail, we break from the switch and no rotation is performed. The below code block shows the tests for rotating most block types anticlockwise from 0 degrees:
+The second step was combining this function with the translation tests. To run each test I used an if statement to check if the block is being rotated left or right, then switch statements with a case for each rotation-state, which updates the `testOrigin` variable accordingly and calls `tryRotate()`. If `tryRotate() === true`, a rotation has been successfully performed and we return out of the switch statement. Otherwise we progress to the next test, updating `testOrigin` to a new test position, calling `tryRotate()` again with the new value, and so on. Finally if all five tests fail, we break from the switch and no rotation is performed. The below code block shows the tests for rotating most block types anticlockwise from 0 degrees:
 
+```js
 if (event.keyCode === rotateLeftKey) {
         switch (currentBlockRotation) {
           case 0:
@@ -487,55 +497,73 @@ if (event.keyCode === rotateLeftKey) {
               return;
             }
             break;
+```
 
-Getting this to work and seeing the game “think” its way around obstructed rotations was easily one of the most satisfying parts of the build. At this point all the main features were added, and the game played like Tetris!
+Getting this to work and seeing the game “think” its way around obstructed rotations was easily one of the most satisfying parts of the build. 
 
-Styling & Bonus Functionality
+At this point all the main features were added, and the game played like Tetris!
+
+<br>
+
+### Styling & Bonus Functionality
 
 I used the last day or so of my time on the project to add several finishing touches, improvements, and bonus features:
-Styling: I did this quite quickly, as I felt more comfortable about reworking the CSS later to add polish than delivering a game with half-finished functionality. I went with pastel colours and rounded borders on containers and the blocks, to push everything away from the blocky look I’d been staring at for most of the process, and imported the Sono font to match the rounded style.
-I added a start game button, and a “game over/play again?” screen. I used a div with absolute positioning and a translucent background-color to create a banner, and then toggled its CSS display property in each function that handled starting or ending the game.
-Levelling up and speeding up the blocks with each level. I did this by incrementing the currentPlayer.level and increasing the blockFallSpeed (which controls the fallTimer interval) when the player has cleared a given number of rows.
-A 3-second countdown before the game starts, to give the player time to get their hands on the keyboard - this is just a setInterval that
-A next-up block viewer, telling the player which block was coming next. To implement this, I simply switched the logic for serving blocks to a nextBlock variable rather than the currentBlock, and then assigned current block to the “previous” next block before choosing a “new” nextBlock. Now the game serves a block whilst the player is still positioning the previous one, renders it to the next-up block viewer, and then only renders it to the screen once the previous one has been placed. I chose to render the viewer programmatically rather than just showing a static image of the next block, so that any styling changed wouldn’t mean having to update all the images of the blocks. Next for this feature, I would like to figure out a way to keep each block centred in the viewer.
+* Styling: I did this quite quickly, as I felt more comfortable about reworking the CSS later to add polish than delivering a game with half-finished functionality. I went with pastel colours and rounded borders on containers and the blocks, to push everything away from the blocky look I’d been staring at for most of the process, and imported the Sono font to match the rounded style.
+* I added a start game button, and a “game over/play again?” screen. I used a div with absolute positioning and a translucent background-color to create a banner, and then toggled its CSS display property in each function that handled starting or ending the game.
+* Levelling up and speeding up the blocks with each level. I did this by incrementing the currentPlayer.level and increasing the blockFallSpeed (which controls the fallTimer interval) when the player has cleared a given number of rows.
+* A 3-second countdown before the game starts, to give the player time to get their hands on the keyboard - this is just a setInterval that
+* A "next-up block view", telling the player which block was coming next. To implement this, I simply switched the logic for serving blocks to a nextBlock variable rather than the currentBlock, and then assigned current block to the “previous” next block before choosing a “new” nextBlock. Now the game serves a block whilst the player is still positioning the previous one, renders it to the next-up block viewer, and then only renders it to the screen once the previous one has been placed. I chose to render the viewer programmatically rather than just showing a static image of the next block, so that any styling changed wouldn’t mean having to update all the images of the blocks. Next for this feature, I would like to figure out a way to keep each block centred in the viewer.
 
-————————
-Challenges
+<br>
 
-    	Keeping my code concise, clean and readable was one of the biggest challenges; partly down to hard-coding the blocks as one long object, and the lengthy logic for performing the wall-kick tests. Although I could have saved lines by coding each block as a flat array, I opted to retain the nested matrix structure, as it makes the blocks more readable on the page.
-    	Adding the wall kick tests, which took me a while to figure out how to extend the functionality for rendering blocks and basic rotation. Deciding to use an invisible “test block” initially helped me keep the logic for the wall kick tests and the active block separate in my mind.
+---
 
-————————
-Wins
+## Challenges
 
-    	Getting the wall kick tests working was incredibly satisfying. It felt like I’d given the game a (very basic) brain, and was great to be able to take the data and description of the functionality from actual Tetris games and figure out a way to implement it in my own code.
-    	Next-up block: this small bit of functionality adds more strategy to the game, and I enjoyed repurposing the grid and block matrix to render the block as part of the UI, as well as refactoring the code to select each block one block in advance of it being served to the player.
+* Keeping my code concise, clean and readable was one of the biggest challenges; partly down to hard-coding the blocks as one long object, and the lengthy logic for performing the wall-kick tests. Although I could have saved lines by coding each block as a flat array, I opted to retain the nested matrix structure, as it makes the blocks more readable on the page.
+* Adding the wall kick tests, which took me a while to figure out how to extend the functionality for rendering blocks and basic rotation. Deciding to use an invisible “test block” initially helped me keep the logic for the wall kick tests and the active block separate in my mind.
 
-————————
-Key Takeaways
+<br>
 
-    	Importance of planning, wire framing, pseudocoding. Having a framework of notes and a to-do list helped me to know what the next step would be, and to keep sight of the big picture, avoiding tunnel vision on a single feature. I learned that thinking problems through and resisting the urge to just dive in and start coding makes for cleaner code and  pays back dividends in time later in a project.
-    	Importance of clear names for variables; avoid unclear ‘magic numbers’. Initially I hard-coded operands when incrementing/decrementing indices to move between rows & columns, and quickly lost track of what certain calculations were doing when I went back to them to change something. Lesson learned - I made sure to rewrite this code to use clearly named constants instead.
-    	Can initially be better to finish a feature than to be perfectionist about it. My goal was to build as complete a game as possible, and this taught me that finding a working solution before getting hung up on finding an elegant one makes it easier to stay on task… as long as I go back in and refactor once the feature is working, as rushing to implement all features without refactoring along the way makes for messy code.
+---
 
-————————
-Bugs
+## Wins
+
+* Getting the wall kick tests working was incredibly satisfying. It felt like I’d given the game a (very basic) brain, and was great to be able to take the data and description of the functionality from actual Tetris games and figure out a way to implement it in my own code.
+* The "next-up block viewer": this small bit of functionality adds more strategy to the game, and I enjoyed repurposing the grid and block matrix to render the block as part of the UI, as well as refactoring the code to select each block one block in advance of it being served to the player.
+
+<br>
+
+---
+
+## Key Takeaways
+
+* Importance of planning, wire framing, pseudocoding. Having a framework of notes and a to-do list helped me to know what the next step would be, and to keep sight of the big picture, avoiding tunnel vision on a single feature. I learned that thinking problems through and resisting the urge to just dive in and start coding makes for cleaner code and  pays back dividends in time later in a project.
+* Importance of clear names for variables; avoid unclear ‘magic numbers’. Initially I hard-coded operands when incrementing/decrementing indices to move between rows & columns, and quickly lost track of what certain calculations were doing when I went back to them to change something. Lesson learned - I made sure to rewrite this code to use clearly named constants instead.
+* Can initially be better to finish a feature than to be perfectionist about it. My goal was to build as complete a game as possible, and this taught me that finding a working solution before getting hung up on finding an elegant one makes it easier to stay on task… as long as I go back in and refactor once the feature is working, as rushing to implement all features without refactoring along the way makes for messy code.
+
+<br>
+
+---
+
+## Bugs
 
     	When the player uses the arrow key to move the block down, there is a varying amount of lag before the block is added to the stack and/or a row is cleared. This is because addToStack() and clearRows() are only firing with the fallTimer interval; if the player uses the down-arrow to drop the block, this may be out of sync with the fallTimer, meaning there is a delay until the functions fire. This could be fixed by refactoring the code so the functions fire whenever the player moves the block.
     	The “Play” button will sometimes animate but not start the game when clicked. This can be avoided by clicking near the centre of the button or clicking very quickly, so it seems that because the animation is achieved by reducing the button’s scale, if the mouse is too far from the centre of the button then it will shrink so the mouse is no longer over the button and therefore no “click” event is registered by the eventListener. This could be fixed by changing the animation, listening for a different event, or having separate elements for the animation and the eventListener so the clickable area does not shrink.
 
-————————
-Future Improvements
+<br>
+
+---
+
+## Future Improvements
 
 Although I’m satisfied that I implemented nearly all my desired functionality, there are several things on my to-do list for when I next grab a moment to work on this project:
-Refactor my code to keep it DRY. There is more repetition than I’d like, where I opted to write new functions to keep similar features separate to make it easier to hold everything in my head. In most cases I could slightly rearrange the logic and pass different values to one function to achieve the same results with fewer lines.
-Break longer blocks of code out into modules, to keep everything concise and readable (especially the allBlocks object and the wall kick tests).
-Add the classic “hard-drop” functionality, letting the player instantly drop the block to the stack below.
+* Refactor my code to keep it DRY. There is more repetition than I’d like, where I opted to write new functions to keep similar features separate to make it easier to hold everything in my head. In most cases I could slightly rearrange the logic and pass different values to one function to achieve the same results with fewer lines.
+* Break longer blocks of code out into modules, to keep everything concise and readable (especially the allBlocks object and the wall kick tests).
+* Add the classic “hard-drop” functionality, letting the player instantly drop the block to the stack below.
 Responsive design: this was a stretch goal in the original brief, so it would be good to add it. I’d also like to add touchscreen controls for mobile.
-Add audio - I considered this one of the less important features of the game, but it would spice the game up a lot.
-Pausing the game! At the moment, once you start, you can’t stop until you lose (I’m sure there’s a bleak metaphor in there somewhere). I should be able to implement cancelling and restarting the block fall timer to achieve this.
-A “level clear” screen – giving the player a moment to pause before continuing to the next level.
-Leaderboard using localStorage - again a stretch goal from the original brief; would be good to add for this reason.
-[a]After writing up all my notes I expect this readme is too long, but it's easier for me to cut paragraphs than write them in!
-[b]It's also pasted in from markdown, so there are a few formatting quirks.
-[c](in the markdown these are links to each section)
+* Add audio - I considered this one of the less important features of the game, but it would spice the game up a lot.
+* Pausing the game! At the moment, once you start, you can’t stop until you lose (I’m sure there’s a bleak metaphor in there somewhere). I should be able to implement cancelling and restarting the block fall timer to achieve this.
+* A “level clear” screen – giving the player a moment to pause before continuing to the next level.
+* Leaderboard using localStorage - again a stretch goal from the original brief; would be good to add for this reason.
+
