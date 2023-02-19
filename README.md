@@ -48,7 +48,9 @@ https://ljsgrant.github.io/ga-project-1/
 
 ---
 
+<button> [&#9650; _Back to contents_](#contents)</button>
 ## Technologies Used
+
 
 - HTML
 - CSS
@@ -61,7 +63,7 @@ https://ljsgrant.github.io/ga-project-1/
 <br>
 
 ---
-
+<button> [&#9650; _Back to contents_](#contents)</button>
 ## Brief
 
 The overall brief was to:
@@ -89,13 +91,16 @@ Students were then given a choice from a selection of different games, ranked in
 
 <br>
 
----
+<button> [&#9650; _Back to contents_](#contents)</button>
 
+---
 ## Planning
 
 ### Research
 
 I began by doing general research into Tetris, and found that there are fairly clear guidelines for how official Tetris games should play (as covered here: [tetris.wiki/Tetris_Guideline](https://tetris.wiki/Tetris_Guideline)). Although I was aiming to fulfil the brief provided rather than to make an official Tetris game with perfect accuracy, I decided to default to the guidelines if in any doubt over how a given feature should behave, rather than wasting time reinventing the wheel for tried-and-tested features. This really helped me on how to approach each piece of logic, and most crucially for how to handle rotation when a block is obstructed by a wall or other blocks, using the “wall kick” functionality.
+
+<button> [&#9650; _Back to contents_](#contents)</button>
 
 ### To-Do List of features
 
@@ -116,6 +121,8 @@ I also wrote down a few key stretch goals:
 A levelling-up mechanic, to track the player’s progress and speed up block fall speed with each level;
 The classic “next block” feature, allowing the player to see which block will fall after the current one, meaning they can plan a more effective strategy;
 Audio to bring the game to life.
+
+<button> [&#9650; _Back to contents_](#contents)</button>
 
 ### Pseudocoding
 
@@ -160,7 +167,7 @@ I knew I would need CSS classes for each type of block to render it on screen, b
 <br>
 
 ---
-
+<button> [&#9650; _Back to contents_](#contents)</button>
 ## Build/Code Process
 
 ### Building the Play Grid
