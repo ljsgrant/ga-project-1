@@ -66,29 +66,26 @@ https://ljsgrant.github.io/ga-project-1/
 
 The overall brief was to:
 
-```
-Build a version of a classic arcade game using JavaScript, HTML and CSS, using DOM manipulation for the game mechanics, and to be playable in the browser and deployed online.
-```
+>Build a version of a classic arcade game using JavaScript, HTML and CSS, using DOM manipulation for the game mechanics, and to be playable in the browser and deployed online.
 
 Students were then given a choice from a selection of different games, ranked in order of expected difficulty of execution – I chose Tetris, which was listed as one of the harder options, as I wanted to challenge myself and test the skills I had developed over the first few weeks of the course. The brief for Tetris was as follows:
 
-```
-Tetris
 
-A puzzle game where the player has to fit different shaped blocks together so that they make a complete line across the playing board. Once a line is achieved it is removed from the game board and the player's score is increased. The player can move the blocks left and right and rotate them clockwise in 90º increments. The aim of the game is to get as many points as possible before the game board is filled with blocks.
-
-Required Functionality:
-
-  - The game should stop if a Tetrimino fills the highest row of the game board
-  - The player should be able to rotate each Tetrimino about its own axis
-  - If a line is completed it should be removed and the pieces above should take its place
-
-Bonus Functionality:
-
-  - Responsive design
-  - Speed increases over time
-  - Persistent leaderboard using localStorage
-```
+> Tetris
+>
+> A puzzle game where the player has to fit different shaped blocks together so that they make a complete line across the playing board. Once a line is achieved it is removed from the game board and the player's score is increased. The player can move the blocks left and right and rotate them clockwise in 90º increments. The aim of the game is to get as many points as possible before the game board is filled with blocks.
+> 
+> Required Functionality:
+>
+>  - The game should stop if a Tetrimino fills the highest row of the game board
+>  - The player should be able to rotate each Tetrimino about its own axis
+>  - If a line is completed it should be removed and the pieces above should take its place
+>
+> Bonus Functionality:
+>
+>  - Responsive design
+>  - Speed increases over time
+>  - Persistent leaderboard using localStorage
 
 <br>
 
@@ -165,7 +162,7 @@ I knew I would need CSS classes for each type of block to render it on screen, b
 
 ### Building the Play Grid
 
-I began by creating a standard Tetris play grid of 10x20 playable cells, writing a `buildGrid()` function with a for loop that creates divs, gives them a data-index attribute that increments by 1 with each iteration, pushes them onto a gridCells array, and then adds them to a grid parent element in the DOM with `element.appendChild()`. This way each cell in the grid can be targeted with its data-index. Also I could assign CSS classes to rows and columns, which would be useful for adding “bounds” classes to the rows and columns at the edge of the grid.
+I began by creating a standard Tetris play grid of 10x20 playable cells, writing a `buildGrid()` function with a for loop that creates divs, gives them a data-index attribute that increments by 1 with each iteration, pushes them onto a `gridCells` array, and then adds them to a grid parent element in the DOM with `element.appendChild()`. This way each cell in the grid can be targeted with its data-index. Also I could assign CSS classes to rows and columns, which would be useful for adding “bounds” classes to the rows and columns at the edge of the grid.
 
 In hindsight I think it would have been better to build the grid with a parent array of rows, and nested sub-arrays for the cells in each row, making it simpler to keep track of rows and their cells separately, making for more readable code vs. messier calculations to check if a cell is at the left, right, top or bottom of the grid. This is a key area I want to go back and rework.
 
@@ -240,7 +237,7 @@ To make the blocks move down the grid of their own accord, I wrote a `blockFall(
 
 ### Limiting Block Movement & Adding Blocks to the Stack
 
-The block could now move but the basic movement allowed it to move “off the edge” of the grid. As the grid is a flat array, this resulted in blocks disappearing off one side and appearing on the opposite side of the grid.  Also when falling blocks reached the bottom of the grid, the interval would keep firing `blockFall()` and move the block to indices greater than the length of the `gridCells array`, throwing a game-breaking error as `renderNewPositon()` tries to loop over undefined indices greater than the length of the array.
+The block could now move but the basic movement allowed it to move “off the edge” of the grid. As the grid is a flat array, this resulted in blocks disappearing off one side and appearing on the opposite side of the grid.  Also when falling blocks reached the bottom of the grid, the interval would keep firing `blockFall()` and move the block to indices greater than the length of the `gridCells` array, throwing a game-breaking error as `renderNewPositon()` tries to loop over undefined indices greater than the length of the array.
 
 To fix this I went back to my `buildGrid()` function and added `left-bounds`, `right-bounds` and `bottom-bounds` CSS classes to the outermost columns of the grid using the modulo operator, e.g.:
 
@@ -312,7 +309,7 @@ Finally I styled the `out-of-bounds` cells with 0 width / height, so only the pl
 ![bounds cells 3](assets/images/readme/project-1-out-of-bounds-3.png 'Bounds cells 3')
 
 
-Basic Rotation
+### Basic Rotation
 
 As I had hard-coded the blocks’ 4 rotation-states, basic rotation was a matter of looking up the matrix for a given block and given rotation in my `allBlocks` object, then re-rendering the block with this new matrix. I wrote a `setBlockMatrix()` function to perform the lookup:
 
@@ -326,9 +323,10 @@ function setBlockMatrix() {
 I added an eventListener to listen for ‘keydown’ and call a `rotateBlock()` function, and added a `currentBlockRotation` variable to keep track of the block’s orientation. `rotateBlock()` takes a keyCode as an argument, checks if the left or right rotation key has been pressed, and:
 * calls `clearOldPosition()` to remove the currently rendered block;
 * either changes `currentBlockRotation` by +/- 90, or if the result would be less than 0 or greater than 360 it sets the `currentBlockRotation` to 270 or 0 respectively;
-* calls the `setBlockMatrix()` function to look up the matrix for the new currentRotation;
-* calls `renderNewPosition()` to render a block with the new currentBlockRotation value:
+* calls the `setBlockMatrix()` function to look up the matrix for the new `currentRotation`;
+* calls `renderNewPosition()` to render a block with the new `currentBlockRotation` value:
 
+``` jsx
 function rotateBlock(keyCode) {
     if (obstructedCells === 0) {
       switch (keyCode) {
@@ -357,11 +355,12 @@ function rotateBlock(keyCode) {
       }
     }
   }
+```
+### Clearing Rows
 
-Clearing Rows
+My `clearRows()` function uses a for loop to slice the grid into rows, excluding any cells that are outside the playable area (this is one place that having nested arrays for each row would simplify things), and checks each row to see if all cells contain the static-block class using `Array.every()`. If every cell is filled then we use a `forEach` to call the `clearCell()` function on each cell, before getting all remaining static blocks above the cleared row (by checking if their index is < the index of the cleared row), and using another `forEach` to clear the `static-block` class of each cell and then add it to the cell immediately below. `clearRows()` fires with the `fallTimer` interval, so it checks for new rows every time the block moves down.
 
-My clearRows() function uses a for loop to slice the grid into rows, excluding any cells that are outside the playable area (this is one place that having nested arrays for each row would simplify things), and checks each row to see if all cells contain the static-block class using Array.every(). If every cell is filled then we use a forEach to call the clearCell() function on each cell, before getting all remaining static blocks above the cleared row (by checking if their index is < the index of the cleared row), and using another forEach to clear the static-block class of each cell and then add it to the cell immediately below. clearRows() fires with the fallTimer interval, so it checks for new rows every time the block moves down.
-
+``` js
 function clearRows() {
 for (
       let index = parseInt(
@@ -387,19 +386,19 @@ getCellsToMoveDown(index).forEach((cell) => {
         clearRows();
       }
     }
+```
+### Game Over
 
-Game Over
+To allow the game to end when the stack reaches the top of the grid, I wrote a `checkForGameOver()` function that returns true if the `currentOrigin` is within a certain distance of the top of the grid, and a `gameOver()` function which clears the `fallTimer` interval and displays a Game Over screen.
 
-To allow the game to end when the stack reaches the top of the grid, I wrote a checkForGameOver() function that returns true if the currentOrigin is within a certain distance of the top of the grid, and a gameOver() function which clears the fallTimer interval and displays a Game Over screen.
+### Giving Blocks Different Colours
 
-Giving Blocks Different Colours
-
-At this point all blocks were the same colour - not great to look at. I created a different CSS class for each block type, and named each so that I could access it using the currentBlock variable: .block-${currentBlock}.
+At this point all blocks were the same colour - not great to look at. I created a different CSS class for each block type, and named each so that I could access it using the `currentBlock` variable: `.block-${currentBlock}`.
 
 Then I needed to make a couple of changes:
-When clearing rows I now needed to clear all block classes before shifting the stack down  
-I was currently clearing the classes then adding static-block class to the squares below; now for blocks to retain their colour in the stack I needed to get the classList of each square and store it in a variable, before calling element.classList.remove(), so the correct block class could be added to the block below:
-
+* When clearing rows I now needed to clear all block classes before shifting the stack down;  
+* I was currently clearing the classes then adding `static-block` class to the squares below; now for blocks to retain their colour in the stack I needed to get the `classList` of each square and store it in a variable, before calling `element.classList.remove()`, so the correct block class could be added to the block below:
+``` js
 function clearRows() {
   for (
     let index = parseInt(
@@ -424,11 +423,11 @@ function clearRows() {
       clearRows();
     }
   }
+```
+### Advanced Rotation: adding Wall Kicks
 
-Advanced Rotation: adding Wall Kicks
-
-From Tetris.fandom.com:
-“A wall kick happens when a player rotates a piece when no space exists in the squares where that tetromino would normally occupy after the rotation. To compensate, the game sets a certain number of alternative spaces for the tetromino to look. Wall kicks started appearing in games because after a piece would be backed up against the wall, it would awkwardly be unable to rotate until first moving back.”
+From [Tetris.fandom.com](http://Tetris.fandom.com):
+> A wall kick happens when a player rotates a piece when no space exists in the squares where that tetromino would normally occupy after the rotation. To compensate, the game sets a certain number of alternative spaces for the tetromino to look. Wall kicks started appearing in games because after a piece would be backed up against the wall, it would awkwardly be unable to rotate until first moving back.
 
 There are various wall kick systems in Tetris games, and luckily plenty of good documentation from fans. After my some research I decided on the Standard Rotation System (SRS), which seemed to provide smarter functionality and offer more of a fun challenge to implement than some of the simpler mechanics.
 
