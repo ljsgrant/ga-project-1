@@ -1,4 +1,4 @@
-# Building Tetris with Javascript, HTML & CSS: Project 1, Software Engineering Immersive with General Assembly
+# Building Tetris with Javascript, HTML & CSS (General Assembly Project 1)
 
 ## Description & Deployment Link
 
