@@ -301,7 +301,6 @@ However after testing this I quickly realised that as several blocks’ rotation
 
 
 To fix this I decided the simplest option was to expand the grid beyond the playable area, adding two invisible rows/columns to all sides of the grid,and giving them an `out-of-bounds` class. Now the matrix can move beyond the edge of the playable grid without causing errors or visual glitches, whilst keeping the rendered cells within the playable area and constrained by the bounds (shown here minus the top `out-of-bounds` rows):
-￼
 
 ![bounds cells 2](assets/images/readme/project-1-out-of-bounds-2.png 'Bounds cells 2')
 
