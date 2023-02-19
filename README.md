@@ -1,8 +1,8 @@
-# Building Tetris with Javascript, HTML & CSS (General Assembly Project 1)
+# SEI Project 1: Building Tetris with Javascript, HTML & CSS
 
 ## Description & Deployment Link
 
-This was my first module project for the Software Engineering Immersive course with General Assembly, using HTML, CSS and JavaScript to build a classic game from scratch over the course of one week, to be deployed online and playable in the browser.
+This was my first module project for the Software Engineering Immersive (SEI) course with General Assembly, using HTML, CSS and JavaScript to build a classic game from scratch over the course of one week, to be deployed online and playable in the browser.
 
 ### Link to Deployed Game:
 
