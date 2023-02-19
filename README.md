@@ -59,9 +59,9 @@ https://ljsgrant.github.io/ga-project-1/
 - Chrome Developer Tools
 - VSCode
 
-<br>
-
 [&#9650; _Back to contents_](#contents)
+
+<br>
 
 ---
 ## Brief
@@ -89,9 +89,9 @@ Students were then given a choice from a selection of different games, ranked in
 >  - Speed increases over time
 >  - Persistent leaderboard using localStorage
 
-<br>
-
 [&#9650; _Back to contents_](#contents)
+
+<br>
 
 ---
 ## Planning
@@ -171,10 +171,9 @@ To stop the blocks moving off the edges of the play grid, I planned to add a “
 
 I knew I would need CSS classes for each type of block to render it on screen, but also opted to have a generalised static-block class, so I could do a single check for if the active-block was about to move into an occupied cell.
 
+[&#9650; _Back to contents_](#contents)
 
 <br>
-
-[&#9650; _Back to contents_](#contents)
 
 ---
 ## Build/Code Process
@@ -386,6 +385,7 @@ function rotateBlock(keyCode) {
     }
   }
 ```
+
 [&#9650; _Back to contents_](#contents)
 
 ### Clearing Rows
@@ -419,6 +419,7 @@ getCellsToMoveDown(index).forEach((cell) => {
       }
     }
 ```
+
 [&#9650; _Back to contents_](#contents)
 
 ### Game Over
@@ -539,9 +540,9 @@ Getting this to work and seeing the game “think” its way around obstructed r
 
 At this point all the main features were added, and the game played like Tetris!
 
-<br>
-
 [&#9650; _Back to contents_](#contents)
+
+<br>
 
 ### Styling & Bonus Functionality
 
@@ -552,9 +553,9 @@ I used the last day or so of my time on the project to add several finishing tou
 * A 3-second countdown before the game starts, to give the player time to get their hands on the keyboard - this is just a setInterval that
 * A "next-up block view", telling the player which block was coming next. To implement this, I simply switched the logic for serving blocks to a nextBlock variable rather than the currentBlock, and then assigned current block to the “previous” next block before choosing a “new” nextBlock. Now the game serves a block whilst the player is still positioning the previous one, renders it to the next-up block viewer, and then only renders it to the screen once the previous one has been placed. I chose to render the viewer programmatically rather than just showing a static image of the next block, so that any styling changed wouldn’t mean having to update all the images of the blocks. Next for this feature, I would like to figure out a way to keep each block centred in the viewer.
 
-<br>
-
 [&#9650; _Back to contents_](#contents)
+
+<br>
 
 ---
 
@@ -563,9 +564,9 @@ I used the last day or so of my time on the project to add several finishing tou
 * Keeping my code concise, clean and readable was one of the biggest challenges; partly down to hard-coding the blocks as one long object, and the lengthy logic for performing the wall-kick tests. Although I could have saved lines by coding each block as a flat array, I opted to retain the nested matrix structure, as it makes the blocks more readable on the page.
 * Adding the wall kick tests, which took me a while to figure out how to extend the functionality for rendering blocks and basic rotation. Deciding to use an invisible “test block” initially helped me keep the logic for the wall kick tests and the active block separate in my mind.
 
-<br>
-
 [&#9650; _Back to contents_](#contents)
+
+<br>
 
 ---
 
@@ -574,9 +575,9 @@ I used the last day or so of my time on the project to add several finishing tou
 * Getting the wall kick tests working was incredibly satisfying. It felt like I’d given the game a (very basic) brain, and was great to be able to take the data and description of the functionality from actual Tetris games and figure out a way to implement it in my own code.
 * The "next-up block viewer": this small bit of functionality adds more strategy to the game, and I enjoyed repurposing the grid and block matrix to render the block as part of the UI, as well as refactoring the code to select each block one block in advance of it being served to the player.
 
-<br>
-
 [&#9650; _Back to contents_](#contents)
+
+<br>
 
 ---
 
@@ -586,9 +587,9 @@ I used the last day or so of my time on the project to add several finishing tou
 * Importance of clear names for variables; avoid unclear ‘magic numbers’. Initially I hard-coded operands when incrementing/decrementing indices to move between rows & columns, and quickly lost track of what certain calculations were doing when I went back to them to change something. Lesson learned - I made sure to rewrite this code to use clearly named constants instead.
 * Can initially be better to finish a feature than to be perfectionist about it. My goal was to build as complete a game as possible, and this taught me that finding a working solution before getting hung up on finding an elegant one makes it easier to stay on task… as long as I go back in and refactor once the feature is working, as rushing to implement all features without refactoring along the way makes for messy code.
 
-<br>
-
 [&#9650; _Back to contents_](#contents)
+
+<br>
 
 ---
 
@@ -597,9 +598,9 @@ I used the last day or so of my time on the project to add several finishing tou
     	When the player uses the arrow key to move the block down, there is a varying amount of lag before the block is added to the stack and/or a row is cleared. This is because addToStack() and clearRows() are only firing with the fallTimer interval; if the player uses the down-arrow to drop the block, this may be out of sync with the fallTimer, meaning there is a delay until the functions fire. This could be fixed by refactoring the code so the functions fire whenever the player moves the block.
     	The “Play” button will sometimes animate but not start the game when clicked. This can be avoided by clicking near the centre of the button or clicking very quickly, so it seems that because the animation is achieved by reducing the button’s scale, if the mouse is too far from the centre of the button then it will shrink so the mouse is no longer over the button and therefore no “click” event is registered by the eventListener. This could be fixed by changing the animation, listening for a different event, or having separate elements for the animation and the eventListener so the clickable area does not shrink.
 
-<br>
-
 [&#9650; _Back to contents_](#contents)
+
+<br>
 
 ---
 
