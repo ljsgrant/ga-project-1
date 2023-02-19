@@ -122,18 +122,18 @@ Audio to bring the game to life.
 #### Wireframe
 
 I made a basic wireframe to better visualise the play grid and how blocks could move on it, then worked through each item on my to-do list with pseudocode, making sure I had a plan for how to tackle each problem before I started to code for real.
-￼
+
 ![wireframe of page layout and tetris play grid](assets/images/readme/project-1-wireframe.png 'Wireframe')
 
 #### Rendering Blocks and Basic Rotation
 
 For basic rotation, I considered two options:
 * One approach using calculations where each square of a block is translated around the origin to produce a rotation effect:
-￼
+
 ![planning rotation](assets/images/readme/project-1-planning-rotation.png 'Planning Rotation')
 
 * The other approach would be hard-coding each block as an array matrix, where each cell in a 3x3 or 4x4 grid is either rendered (if the value is 1) or not rendered (if the value is 0):
-￼
+
 ![planning rotation](assets/images/readme/project-1-planning-rotation-2.png 'Planning Rotation')
 
 I decided to go with the second option as the blocks never change beyond 4 rotation states and there aren’t an excessive quantity of them to hard-code. It also means we don’t have to worry about rotation origins being different for different blocks, and I expected a bonus to be easier debugging: it’s easy to “see” each rotation of the block when looking at the matrices, and therefore easy to check expected behaviour and make changes by “drawing” the block with 1s and 0s. An obvious downside is the additional lines of code this takes up, but I figured the tradeoff was worth it as I could press on with adding more complex functionality rather than spending time on rotation calculations for a non-dynamic set of blocks.
@@ -143,7 +143,7 @@ I decided to go with the second option as the blocks never change beyond 4 rotat
 I settled on the grid being an array of divs, so moving the block right would mean incrementing each cell’s index by 1, moving left would decrement by 1, and moving down would increment by an amount equal to the number of cells in a row. (In hindsight I believe there was a better way to do this – more on this in the build process).
 
 ![planning block movement](assets/images/readme/project-1-planning-origins.png 'Planning Block Movement')
-￼
+
 I planned to track the block’s position using a `currentOrigin` variable, which would be the top-left corner of the block matrix. `currentOrigin` would start equal to a const `spawnOrigin` when a block first appears, and then be incremented or decremented to move the block.
 
 #### Limiting left/right movement
@@ -155,7 +155,7 @@ To stop the blocks moving off the edges of the play grid, I planned to add a “
 #### Stopping at the Stack
 
 I knew I would need CSS classes for each type of block to render it on screen, but also opted to have a generalised static-block class, so I could do a single check for if the active-block was about to move into an occupied cell.
-￼
+
 
 <br>
 
