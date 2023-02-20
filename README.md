@@ -12,7 +12,7 @@ https://ljsgrant.github.io/ga-project-1/
 
 <br />
 
----
+
 
 <br />
 
@@ -46,7 +46,7 @@ https://ljsgrant.github.io/ga-project-1/
 
 <br />
 
----
+
 
 ## Technologies Used
 
@@ -63,7 +63,7 @@ https://ljsgrant.github.io/ga-project-1/
 
 <br />
 
----
+
 ## Brief
 
 The overall brief was to:
@@ -93,7 +93,7 @@ Students were then given a choice from a selection of different games, ranked in
 
 <br />
 
----
+
 ## Planning
 
 ### Research
@@ -175,7 +175,7 @@ I knew I would need CSS classes for each type of block to render it on screen, b
 
 <br />
 
----
+
 ## Build/Code Process
 
 ### Building the Play Grid
@@ -556,7 +556,7 @@ I used the last day or so of my time on the project to add several finishing tou
 
 <br />
 
----
+
 
 ## Challenges
 
@@ -567,7 +567,7 @@ I used the last day or so of my time on the project to add several finishing tou
 
 <br />
 
----
+
 
 ## Wins
 
@@ -578,7 +578,7 @@ I used the last day or so of my time on the project to add several finishing tou
 
 <br />
 
----
+
 
 ## Key Takeaways
 
@@ -590,7 +590,7 @@ I used the last day or so of my time on the project to add several finishing tou
 
 <br />
 
----
+
 
 ## Bugs
 
@@ -601,7 +601,7 @@ I used the last day or so of my time on the project to add several finishing tou
 
 <br />
 
----
+
 
 ## Future Improvements
 
